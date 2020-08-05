@@ -3,4 +3,17 @@
 
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
+    <application>
+
+        <activity
+            android:name=".internal.ui.MainActivity"
+            android:launchMode="singleTask"
+            android:taskAffinity="id.lukasdylan.grpc.protodroid.task"
+            android:theme="@style/ProtodroidTheme" />
+
+        <activity
+            android:name=".internal.ui.detail.DetailActivity"
+            android:theme="@style/ProtodroidTheme" />
+
+    </application>
 </manifest>

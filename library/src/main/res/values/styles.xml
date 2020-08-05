@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="ProtodroidTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@android:color/black</item>
+        <item name="colorPrimaryDark">@android:color/black</item>
+        <item name="colorAccent">@android:color/holo_green_light</item>
+        <item name="android:windowBackground">@android:color/white</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="ToolbarTitleTheme" parent="TextAppearance.AppCompat.Title">
+        <item name="android:fontFamily">monospace</item>
+    </style>
+
+    <style name="ToolbarSubtitleTheme" parent="TextAppearance.AppCompat.Body2">
+        <item name="android:fontFamily">monospace</item>
+    </style>
+</resources>
