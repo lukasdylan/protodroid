@@ -15,9 +15,9 @@ android {
         minSdkVersion 16
         targetSdkVersion 29
         versionCode 1
-        versionName "0.0.1-alpha"
+        versionName "1.0.0"
         project.archivesBaseName = "protodroid"
-        project.version = "0.0.1-alpha"
+        project.version = "1.0.0"
     }
     buildTypes {
         release {
@@ -72,7 +72,7 @@ publishing {
         maven(MavenPublication) {
             groupId 'id.lukasdylan.grpc'
             artifactId 'protodroid'
-            version '0.0.1-SNAPSHOT'
+            version '1.0.0-SNAPSHOT'
             artifact "$buildDir/outputs/aar/protodroid-debug.aar" //aar artifact you want to publish
 
             //generate pom nodes for dependencies

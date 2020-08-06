@@ -20,7 +20,10 @@ class DetailActivity : AppCompatActivity() {
         toolbar?.apply {
             setSupportActionBar(this)
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
-            supportActionBar?.title = intent?.getStringExtra("service_name").orEmpty()
+            val services = intent?.getStringExtra("service_name")?.split("/").orEmpty()
+            supportActionBar?.title = services.getOrElse(1) {
+                intent?.getStringExtra("service_name").orEmpty()
+            }
         }
 
         val dao = Protodroid.getInstance(this).protodroidDao

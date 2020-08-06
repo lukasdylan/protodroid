@@ -65,13 +65,19 @@ internal class ProtodroidClientCall<RequestObject, ResponseObject>(
     }
 
     override fun onFinalState() {
-        printLogFullResponse(state)
         launch {
+            printLogFullResponse(state)
+            val services = state.serviceName.split("/")
+            protodroidNotificationListener?.sendNotification(
+                title = services.getOrElse(1) {
+                    state.serviceName
+                },
+                message = "${state.status?.code?.name} (${state.status?.code})"
+            )
             withContext(Dispatchers.IO) {
                 repository?.updateNewData(state)
             }
         }
-        protodroidNotificationListener?.sendNotification(message = "Hai")
     }
 
     companion object {

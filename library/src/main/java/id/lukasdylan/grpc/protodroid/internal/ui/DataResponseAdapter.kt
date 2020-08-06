@@ -54,7 +54,10 @@ class DataResponseViewHolder(
 
     @SuppressLint("SetTextI18n")
     fun bind(item: ProtodroidDataEntity) {
-        tv_service_name?.text = item.serviceName
+        val services = item.serviceName.split("/")
+        tv_service_name?.text = services.getOrElse(1) {
+            item.serviceName
+        }
         tv_status?.text = when (item.statusCode) {
             STATUS_CODE_ON_PROGRESS -> {
                 tv_status?.setTextColor(onProgressColorText)
