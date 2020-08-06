@@ -72,7 +72,7 @@ internal class ProtodroidClientCall<RequestObject, ResponseObject>(
                 title = services.getOrElse(1) {
                     state.serviceName
                 },
-                message = "${state.status?.code?.name} (${state.status?.code})"
+                message = "${state.status?.code?.name} (${state.status?.code?.value()})"
             )
             withContext(Dispatchers.IO) {
                 repository?.updateNewData(state)
