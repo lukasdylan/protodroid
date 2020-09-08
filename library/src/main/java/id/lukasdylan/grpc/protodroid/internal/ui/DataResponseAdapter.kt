@@ -11,7 +11,7 @@ import id.lukasdylan.grpc.protodroid.R
 import id.lukasdylan.grpc.protodroid.internal.ProtodroidDataDiffCallback
 import id.lukasdylan.grpc.protodroid.internal.database.ProtodroidDataEntity
 import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.item_protodroid_response.*
+import kotlinx.android.synthetic.main.protodroid_item_protodroid_response.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -21,7 +21,7 @@ class DataResponseAdapter(private val listener: (ProtodroidDataEntity) -> Unit) 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DataResponseViewHolder {
         val itemView = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_protodroid_response, parent, false)
+            .inflate(R.layout.protodroid_item_protodroid_response, parent, false)
         return DataResponseViewHolder(itemView, listener)
     }
 

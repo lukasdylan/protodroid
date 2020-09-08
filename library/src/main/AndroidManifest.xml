@@ -8,13 +8,13 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:taskAffinity="id.lukasdylan.grpc.protodroid.task"
-            android:theme="@style/ProtodroidTheme" />
+            android:theme="@style/Protodroid.Theme" />
 
         <activity
             android:name=".internal.ui.detail.DetailActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/ProtodroidTheme" />
+            android:theme="@style/Protodroid.Theme" />
 
     </application>
 </manifest>

@@ -8,7 +8,7 @@
         android:id="@+id/action_delete"
         android:orderInCategory="100"
         android:title="Delete"
-        android:icon="@drawable/icon_delete"
+        android:icon="@drawable/protodroid_icon_delete"
         app:showAsAction="always" />
 
 </menu>

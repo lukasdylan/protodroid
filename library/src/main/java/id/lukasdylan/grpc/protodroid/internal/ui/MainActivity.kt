@@ -16,7 +16,7 @@ import id.lukasdylan.grpc.protodroid.internal.repository.InternalProtodroidRepos
 import id.lukasdylan.grpc.protodroid.internal.ui.detail.DetailActivity
 import id.lukasdylan.grpc.protodroid.internal.viewmodel.MainViewModel
 import id.lukasdylan.grpc.protodroid.internal.viewmodel.MainViewModelFactory
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.protodroid_activity_main.*
 
 class MainActivity : AppCompatActivity(), Observer<List<ProtodroidDataEntity>> {
 
@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity(), Observer<List<ProtodroidDataEntity>> {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.protodroid_activity_main)
         checkDeepLinkData()
         toolbar?.apply {
             setSupportActionBar(this)
@@ -56,7 +56,7 @@ class MainActivity : AppCompatActivity(), Observer<List<ProtodroidDataEntity>> {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_main, menu)
+        menuInflater.inflate(R.menu.protodroid_menu_main, menu)
         return true
     }
 
