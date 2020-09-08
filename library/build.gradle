@@ -6,7 +6,9 @@ apply plugin: 'kotlin-android-extensions'
 
 apply plugin: 'kotlin-kapt'
 
-apply plugin: 'maven-publish'
+apply plugin: 'com.github.dcendents.android-maven'
+
+group = 'com.github.lukasdylan'
 
 android {
     compileSdkVersion 29
@@ -66,34 +68,34 @@ dependencies {
     kapt "androidx.room:room-compiler:2.2.5"
     testImplementation 'junit:junit:4.13'
 }
-
-publishing {
-    publications {
-        maven(MavenPublication) {
-            groupId 'id.lukasdylan.grpc'
-            artifactId 'protodroid'
-            version '1.0.0-SNAPSHOT'
-            artifact "$buildDir/outputs/aar/protodroid-debug.aar" //aar artifact you want to publish
-
-            //generate pom nodes for dependencies
-            pom.withXml {
-                def dependenciesNode = asNode().appendNode('dependencies')
-                configurations.compile.allDependencies.each { dependency ->
-                    def dependencyNode = dependenciesNode.appendNode('dependency')
-                    dependencyNode.appendNode('groupId', dependency.group)
-                    dependencyNode.appendNode('artifactId', dependency.name)
-                    dependencyNode.appendNode('version', dependency.version)
-                }
-            }
-        }
-    }
-
-    //publish to filesystem repo
-    repositories{
-        maven {
-            url "$buildDir/repo"
-        }
-    }
-}
-
-repositories { mavenCentral() }
+//
+//publishing {
+//    publications {
+//        maven(MavenPublication) {
+//            groupId 'id.lukasdylan.grpc'
+//            artifactId 'protodroid'
+//            version '1.0.0-SNAPSHOT'
+//            artifact "$buildDir/outputs/aar/protodroid-debug.aar" //aar artifact you want to publish
+//
+//            //generate pom nodes for dependencies
+//            pom.withXml {
+//                def dependenciesNode = asNode().appendNode('dependencies')
+//                configurations.compile.allDependencies.each { dependency ->
+//                    def dependencyNode = dependenciesNode.appendNode('dependency')
+//                    dependencyNode.appendNode('groupId', dependency.group)
+//                    dependencyNode.appendNode('artifactId', dependency.name)
+//                    dependencyNode.appendNode('version', dependency.version)
+//                }
+//            }
+//        }
+//    }
+//
+//    //publish to filesystem repo
+//    repositories{
+//        maven {
+//            url "$buildDir/repo"
+//        }
+//    }
+//}
+//
+//repositories { mavenCentral() }
