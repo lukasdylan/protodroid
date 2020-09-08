@@ -9,7 +9,6 @@ import id.lukasdylan.grpc.protodroid.internal.transformToEntity
  */
 internal interface ProtodroidRepository {
     suspend fun saveNewData(state: DataState): Long
-    suspend fun updateNewData(state: DataState)
     fun initialize() { /*do nothing*/
     }
 }
@@ -17,9 +16,5 @@ internal interface ProtodroidRepository {
 internal class ProtodroidRepositoryImpl(private val dao: ProtodroidDao) : ProtodroidRepository {
     override suspend fun saveNewData(state: DataState): Long {
         return dao.insertData(state.transformToEntity())
-    }
-
-    override suspend fun updateNewData(state: DataState) {
-        dao.insertData(state.transformToEntity(updateExisting = true))
     }
 }

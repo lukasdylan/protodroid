@@ -20,7 +20,7 @@ internal class ProtodroidClientCallListener<T>(
     }
 
     override fun onClose(status: Status?, trailers: Metadata?) {
-        updateStateListener.onUpdateStatusState(status)
+        updateStateListener.onUpdateStatusState(status, trailers)
         updateStateListener.onFinalState()
         responseListener?.onClose(status, trailers)
     }

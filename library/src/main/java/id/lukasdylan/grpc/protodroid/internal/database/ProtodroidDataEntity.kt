@@ -46,8 +46,8 @@ data class ProtodroidDataEntity(
     val statusErrorCause: String,
 
     @ColumnInfo(name = "create_timestamp")
-    val createdAt: Long = 0L,
+    val createdAt: Long = System.currentTimeMillis(),
 
     @ColumnInfo(name = "update_timestamp")
-    val lastUpdatedAt: Long = 0L
+    val lastUpdatedAt: Long = System.currentTimeMillis()
 ) : Parcelable

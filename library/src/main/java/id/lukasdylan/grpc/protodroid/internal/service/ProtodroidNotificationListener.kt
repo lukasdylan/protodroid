@@ -15,13 +15,18 @@ import id.lukasdylan.grpc.protodroid.internal.ui.MainActivity
  * Created by Lukas Dylan on 05/08/20.
  */
 interface ProtodroidNotificationListener {
-    fun sendNotification(title: String, message: String)
+    fun sendNotification(title: String, message: String, dataId: Long, serviceName: String)
 }
 
 internal class ProtodroidNotificationListenerImpl(private val context: Context) :
     ProtodroidNotificationListener {
 
-    override fun sendNotification(title: String, message: String) {
+    override fun sendNotification(
+        title: String,
+        message: String,
+        dataId: Long,
+        serviceName: String
+    ) {
         val notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
@@ -54,7 +59,9 @@ internal class ProtodroidNotificationListenerImpl(private val context: Context) 
             .setAutoCancel(true)
 
         val intent = Intent(context, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            putExtra("id", dataId)
+            putExtra("service_name", serviceName)
+            putExtra("open_detail", true)
         }
 
         val pendingIntent: PendingIntent = PendingIntent.getActivity(

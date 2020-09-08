@@ -20,7 +20,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:navigationIcon="@drawable/icon_back"
-            app:titleTextAppearance="@style/ToolbarTitleTheme"
+            app:titleTextAppearance="@style/ProtodroidToolbarTitleTheme"
             app:titleTextColor="@android:color/white"
             tools:title="Service Name" />
 
@@ -31,7 +31,7 @@
             android:background="@android:color/black"
             app:tabIndicatorColor="@android:color/white"
             app:tabSelectedTextColor="@android:color/white"
-            app:tabTextAppearance="@style/ToolbarSubtitleTheme"
+            app:tabTextAppearance="@style/ProtodroidToolbarSubtitleTheme"
             app:tabTextColor="@android:color/darker_gray" />
 
     </com.google.android.material.appbar.AppBarLayout>

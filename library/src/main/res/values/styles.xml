@@ -10,11 +10,11 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="ToolbarTitleTheme" parent="TextAppearance.AppCompat.Title">
+    <style name="ProtodroidToolbarTitleTheme" parent="TextAppearance.AppCompat.Title">
         <item name="android:fontFamily">monospace</item>
     </style>
 
-    <style name="ToolbarSubtitleTheme" parent="TextAppearance.AppCompat.Body2">
+    <style name="ProtodroidToolbarSubtitleTheme" parent="TextAppearance.AppCompat.Body2">
         <item name="android:fontFamily">monospace</item>
     </style>
 </resources>

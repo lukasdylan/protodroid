@@ -10,16 +10,17 @@ import io.grpc.*
 /**
  * Created by Lukas Dylan on 05/08/20.
  */
-open class ProtodroidInterceptor(applicationContext: Context) : ClientInterceptor {
+open class ProtodroidInterceptor(context: Context) : ClientInterceptor {
 
     private var repository: ProtodroidRepository? = null
     private var notificationListener: ProtodroidNotificationListener? = null
 
     init {
         if (BuildConfig.DEBUG) {
-            val protodroidInstance = Protodroid.getInstance(applicationContext)
-            repository = protodroidInstance.repository
-            notificationListener = protodroidInstance.notificationListener
+            with(Protodroid.getInstance(context.applicationContext)) {
+                this@ProtodroidInterceptor.repository = repository
+                this@ProtodroidInterceptor.notificationListener = notificationListener
+            }
         }
     }
 

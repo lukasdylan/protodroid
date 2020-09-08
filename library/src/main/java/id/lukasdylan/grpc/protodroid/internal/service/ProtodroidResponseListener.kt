@@ -6,6 +6,6 @@ import io.grpc.Status
 internal interface ProtodroidResponseListener {
     fun onUpdateHeaderState(header: Metadata?)
     fun onUpdateResponseBodyState(responseBody: String)
-    fun onUpdateStatusState(status: Status?)
+    fun onUpdateStatusState(status: Status?, header: Metadata?)
     fun onFinalState()
 }

@@ -10,7 +10,6 @@ import io.grpc.Status
  */
 @Keep
 internal data class DataState(
-    val dataId: Long = -1,
     val serviceUrl: String = "",
     val serviceName: String = "",
     val requestHeader: Metadata? = null,
@@ -18,40 +17,22 @@ internal data class DataState(
     val requestBody: String = "",
     val responseBody: String = "",
     val status: Status? = null,
-    val createdTime: Long = 0L
+    val createdTime: Long = System.currentTimeMillis()
 )
 
-internal fun DataState.transformToEntity(updateExisting: Boolean = false): ProtodroidDataEntity {
-    return if (!updateExisting) {
-        ProtodroidDataEntity(
-            serviceUrl = this.serviceUrl,
-            serviceName = this.serviceName,
-            requestHeader = this.requestHeader?.toString().orEmpty(),
-            responseHeader = this.responseHeader?.toString().orEmpty(),
-            requestBody = this.requestBody,
-            responseBody = this.responseBody,
-            statusCode = this.status?.code?.value() ?: -1,
-            statusName = this.status?.code?.name.orEmpty(),
-            statusDescription = this.status?.description.orEmpty(),
-            statusErrorCause = this.status?.cause?.message.orEmpty(),
-            createdAt = this.createdTime,
-            lastUpdatedAt = System.currentTimeMillis()
-        )
-    } else {
-        ProtodroidDataEntity(
-            id = this.dataId,
-            serviceUrl = this.serviceUrl,
-            serviceName = this.serviceName,
-            requestHeader = this.requestHeader?.toString().orEmpty(),
-            responseHeader = this.responseHeader?.toString().orEmpty(),
-            requestBody = this.requestBody,
-            responseBody = this.responseBody,
-            statusCode = this.status?.code?.value() ?: -1,
-            statusName = this.status?.code?.name.orEmpty(),
-            statusDescription = this.status?.description.orEmpty(),
-            statusErrorCause = this.status?.cause?.message.orEmpty(),
-            createdAt = this.createdTime,
-            lastUpdatedAt = System.currentTimeMillis()
-        )
-    }
+internal fun DataState.transformToEntity(): ProtodroidDataEntity {
+    return ProtodroidDataEntity(
+        serviceUrl = this.serviceUrl,
+        serviceName = this.serviceName,
+        requestHeader = this.requestHeader?.toString().orEmpty(),
+        responseHeader = this.responseHeader?.toString().orEmpty(),
+        requestBody = this.requestBody,
+        responseBody = this.responseBody,
+        statusCode = this.status?.code?.value() ?: -1,
+        statusName = this.status?.code?.name.orEmpty(),
+        statusDescription = this.status?.description.orEmpty(),
+        statusErrorCause = this.status?.cause?.message.orEmpty(),
+        createdAt = this.createdTime,
+        lastUpdatedAt = System.currentTimeMillis()
+    )
 }

@@ -77,7 +77,7 @@ class DetailViewModel(repository: InternalProtodroidRepository, dataId: Long) : 
     }
 
     private fun getFormattedDate(timeInMillis: Long): String {
-        val formatter = SimpleDateFormat("d MMM yyyy HH:mm:ss", Locale.getDefault())
+        val formatter = SimpleDateFormat("d MMM yyyy HH:mm:ss.SSS", Locale.getDefault())
         return formatter.format(Date(timeInMillis))
     }
 }

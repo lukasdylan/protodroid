@@ -26,61 +26,51 @@ internal class ProtodroidClientCall<RequestObject, ResponseObject>(
     )
 
     override fun sendMessage(message: RequestObject) {
-        state = state.copy(
-            requestBody = message.toString(),
-            createdTime = System.currentTimeMillis()
-        )
+        state = state.copy(requestBody = message.toString())
         printLogRequest(state)
         super.sendMessage(message)
     }
 
     override fun start(responseListener: Listener<ResponseObject>?, headers: Metadata?) {
-        launch {
-            val id = withContext(Dispatchers.IO) {
-                repository?.saveNewData(state)
-            } ?: DEFAULT_DATA_ID
-            state = state.copy(dataId = id)
-        }
-
         state = state.copy(requestHeader = headers)
-
         val listener = ProtodroidClientCallListener(
             responseListener = responseListener,
             updateStateListener = this
         )
-
         super.start(listener, headers)
     }
 
     override fun onUpdateHeaderState(header: Metadata?) {
-        state = state.copy(responseHeader = header)
+        if (state.responseHeader == null) {
+            state = state.copy(responseHeader = header)
+        }
     }
 
     override fun onUpdateResponseBodyState(responseBody: String) {
         state = state.copy(responseBody = responseBody)
     }
 
-    override fun onUpdateStatusState(status: Status?) {
+    override fun onUpdateStatusState(status: Status?, header: Metadata?) {
         state = state.copy(status = status)
-    }
-
-    override fun onFinalState() {
-        launch {
-            printLogFullResponse(state)
-            val services = state.serviceName.split("/")
-            protodroidNotificationListener?.sendNotification(
-                title = services.getOrElse(1) {
-                    state.serviceName
-                },
-                message = "${state.status?.code?.name} (${state.status?.code?.value()})"
-            )
-            withContext(Dispatchers.IO) {
-                repository?.updateNewData(state)
-            }
+        if (state.responseHeader == null) {
+            state = state.copy(responseHeader = header)
         }
     }
 
-    companion object {
-        private const val DEFAULT_DATA_ID = -1L
+    override fun onFinalState() {
+        printLogFullResponse(state)
+        launch {
+            val id = withContext(Dispatchers.IO) {
+                repository?.saveNewData(state)
+            }
+            protodroidNotificationListener?.sendNotification(
+                title = state.serviceName.split("/").getOrElse(1) {
+                    state.serviceName
+                },
+                message = "${state.status?.code?.name} (${state.status?.code?.value()})",
+                dataId = id ?: 0L,
+                serviceName = state.serviceName
+            )
+        }
     }
 }

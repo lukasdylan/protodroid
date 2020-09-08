@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import id.lukasdylan.grpc.protodroid.R
@@ -35,19 +36,19 @@ class DataResponseViewHolder(
 ) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
     private val successColorText: Int =
-        androidx.core.content.ContextCompat.getColor(
+        ContextCompat.getColor(
             containerView.context,
             android.R.color.holo_green_dark
         )
 
     private val failedColorText: Int =
-        androidx.core.content.ContextCompat.getColor(
+        ContextCompat.getColor(
             containerView.context,
             android.R.color.holo_red_dark
         )
 
     private val onProgressColorText: Int =
-        androidx.core.content.ContextCompat.getColor(
+        ContextCompat.getColor(
             containerView.context,
             android.R.color.holo_blue_dark
         )
@@ -79,7 +80,7 @@ class DataResponseViewHolder(
     }
 
     private fun getFormattedDate(timeInMillis: Long): String {
-        val formatter = SimpleDateFormat("d MMM yyyy HH:mm:ss", Locale.getDefault())
+        val formatter = SimpleDateFormat("d MMM yyyy HH:mm:ss.SSS", Locale.getDefault())
         return formatter.format(Date(timeInMillis))
     }
 

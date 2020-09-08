@@ -42,6 +42,7 @@ class MainActivity : AppCompatActivity(), Observer<List<ProtodroidDataEntity>> {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        checkDeepLinkData()
         toolbar?.apply {
             setSupportActionBar(this)
             title = applicationInfo.loadLabel(packageManager)
@@ -79,5 +80,17 @@ class MainActivity : AppCompatActivity(), Observer<List<ProtodroidDataEntity>> {
 
     private fun observeViewModel() {
         mainViewModel.dataResponseLiveData.observe(this, this)
+    }
+
+    private fun checkDeepLinkData() {
+        intent?.let {
+            if (it.hasExtra("open_detail") && it.getBooleanExtra("open_detail", false)) {
+                val detailIntent = Intent(this, DetailActivity::class.java).apply {
+                    putExtra("id", it.getLongExtra("id", 0L))
+                    putExtra("service_name", it.getStringExtra("service_name").orEmpty())
+                }
+                startActivity(detailIntent)
+            }
+        }
     }
 }
