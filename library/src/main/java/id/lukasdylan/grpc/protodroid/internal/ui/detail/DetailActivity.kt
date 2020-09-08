@@ -9,13 +9,13 @@ import id.lukasdylan.grpc.protodroid.internal.Protodroid
 import id.lukasdylan.grpc.protodroid.internal.repository.InternalProtodroidRepositoryImpl
 import id.lukasdylan.grpc.protodroid.internal.viewmodel.DetailViewModel
 import id.lukasdylan.grpc.protodroid.internal.viewmodel.DetailViewModelFactory
-import kotlinx.android.synthetic.main.activity_detail.*
+import kotlinx.android.synthetic.main.protodroid_activity_detail.*
 
 class DetailActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_detail)
+        setContentView(R.layout.protodroid_activity_detail)
 
         toolbar?.apply {
             setSupportActionBar(this)

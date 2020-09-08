@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import id.lukasdylan.grpc.protodroid.R
 import id.lukasdylan.grpc.protodroid.internal.viewmodel.DetailViewModel
-import kotlinx.android.synthetic.main.fragment_information.*
+import kotlinx.android.synthetic.main.protodroid_fragment_information.*
 
 class InformationFragment : Fragment(), Observer<List<Pair<String, String>>> {
 
@@ -23,7 +23,7 @@ class InformationFragment : Fragment(), Observer<List<Pair<String, String>>> {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_information, container, false)
+        return inflater.inflate(R.layout.protodroid_fragment_information, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

@@ -17,9 +17,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:subtitle="by Protodroid"
-            app:subtitleTextAppearance="@style/ProtodroidToolbarSubtitleTheme"
+            app:subtitleTextAppearance="@style/Protodroid.ToolbarSubtitleTheme"
             app:subtitleTextColor="@android:color/white"
-            app:titleTextAppearance="@style/ProtodroidToolbarTitleTheme"
+            app:titleTextAppearance="@style/Protodroid.ToolbarTitleTheme"
             app:titleTextColor="@android:color/white"
             tools:title="APK Name" />
 

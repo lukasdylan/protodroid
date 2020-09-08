@@ -8,7 +8,7 @@ import androidx.core.widget.TextViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import id.lukasdylan.grpc.protodroid.R
 import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.item_protodroid_detail_response.*
+import kotlinx.android.synthetic.main.protodroid_item_protodroid_detail_response.*
 
 class InformationAdapter : RecyclerView.Adapter<InformationViewHolder>() {
 
@@ -16,7 +16,7 @@ class InformationAdapter : RecyclerView.Adapter<InformationViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, p1: Int): InformationViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_protodroid_detail_response, parent, false)
+            .inflate(R.layout.protodroid_item_protodroid_detail_response, parent, false)
         return InformationViewHolder(view)
     }
 
