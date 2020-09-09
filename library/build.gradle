@@ -8,6 +8,13 @@ apply plugin: 'kotlin-kapt'
 
 apply plugin: 'com.github.dcendents.android-maven'
 
+repositories {
+    mavenCentral()
+    google()
+    jcenter()
+    maven { url "https://www.jitpack.io" }
+}
+
 group = 'com.github.lukasdylan'
 
 android {
@@ -58,13 +65,6 @@ android {
     resourcePrefix 'protodroid_'
 }
 
-task sourcesJar(type: Jar) {
-    archiveClassifier.set('sources')
-    from android.sourceSets.main.java.srcDirs
-}
-
-install.dependsOn(sourcesJar)
-
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.2.0'
@@ -79,34 +79,28 @@ dependencies {
     kapt "androidx.room:room-compiler:2.2.5"
     testImplementation 'junit:junit:4.13'
 }
-//
-//publishing {
-//    publications {
-//        maven(MavenPublication) {
-//            groupId 'id.lukasdylan.grpc'
-//            artifactId 'protodroid'
-//            version '1.0.0-SNAPSHOT'
-//            artifact "$buildDir/outputs/aar/protodroid-debug.aar" //aar artifact you want to publish
-//
-//            //generate pom nodes for dependencies
-//            pom.withXml {
-//                def dependenciesNode = asNode().appendNode('dependencies')
-//                configurations.compile.allDependencies.each { dependency ->
-//                    def dependencyNode = dependenciesNode.appendNode('dependency')
-//                    dependencyNode.appendNode('groupId', dependency.group)
-//                    dependencyNode.appendNode('artifactId', dependency.name)
-//                    dependencyNode.appendNode('version', dependency.version)
-//                }
-//            }
-//        }
-//    }
-//
-//    //publish to filesystem repo
-//    repositories{
-//        maven {
-//            url "$buildDir/repo"
-//        }
-//    }
-//}
-//
-//repositories { mavenCentral() }
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from android.sourceSets.main.java.sourceFiles
+}
+
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.sourceFiles
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+task classesJar(type: Jar) {
+    from "$buildDir/intermediates/classes/release"
+}
+
+artifacts {
+    archives classesJar
+    archives javadocJar
+    archives sourcesJar
+}
