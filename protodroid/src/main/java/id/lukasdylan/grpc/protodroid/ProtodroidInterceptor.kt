@@ -16,11 +16,9 @@ open class ProtodroidInterceptor(context: Context) : ClientInterceptor {
     private var notificationListener: ProtodroidNotificationListener? = null
 
     init {
-        if (BuildConfig.DEBUG) {
-            with(Protodroid.getInstance(context.applicationContext)) {
-                this@ProtodroidInterceptor.repository = repository
-                this@ProtodroidInterceptor.notificationListener = notificationListener
-            }
+        with(Protodroid.getInstance(context.applicationContext)) {
+            this@ProtodroidInterceptor.repository = repository
+            this@ProtodroidInterceptor.notificationListener = notificationListener
         }
     }
 
