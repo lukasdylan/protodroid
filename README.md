@@ -7,7 +7,7 @@ Android Library for GRPC Network Interceptor
 
 <h3>What is Protodroid?</h3>
 
-Protodroid is an Android library for intercept every API request and response on GRPC, inspired by Chucker. This library was built with 100% pure Kotlin, AndroidX based components, and Kotlin Coroutines. 
+Protodroid is an Android library for intercept every API request and response on GRPC, inspired by [Chucker](https://github.com/ChuckerTeam/chucker). This library was built with 100% pure Kotlin, AndroidX based components, and Kotlin Coroutines. 
 
 <h3>Why Protodroid?</h3>
 
