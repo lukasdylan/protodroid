@@ -26,7 +26,10 @@ Follow this step to implement this library:
 `implementation 'com.github.lukasdylan:protodroid:<latest_version>' `
 into your module. (note: check the latest version [here](https://bintray.com/lukasdylan/Protodroid/protodroid))
 
-2. Don’t forget to exclude `io.grpc.grpc-protobuf-lite` module if you already implement `io.grpc.grpc-protobuf` dependency
+2. Don’t forget to exclude `io.grpc.grpc-protobuf-lite` module if you already implement `io.grpc.grpc-protobuf` dependency 
+   `implementation 'com.github.lukasdylan:protodroid:<latest_version>' {`
+       `exclude group: "io.grpc" module:"grpc-protobuf-lite"`
+   `}`
 
 3. Every GRPC API call need `io.grpc.Channel` as a parameter. Inside of this class, you can put any `io.grpc.ClientInterceptors` that can be stacked for every interceptor by calling 
 > ClientInterceptors.intercept('your client interceptors')
