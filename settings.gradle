@@ -1,2 +1,3 @@
+include ':protodroid-no-op'
 include ':protodroid'
 rootProject.name='protodroid-library'
