@@ -3,15 +3,22 @@ package id.lukasdylan.grpc.protodroid.internal.ui.detail
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.ViewModelProvider
+import androidx.viewpager.widget.ViewPager
+import com.google.android.material.tabs.TabLayout
 import id.lukasdylan.grpc.protodroid.R
 import id.lukasdylan.grpc.protodroid.internal.Protodroid
 import id.lukasdylan.grpc.protodroid.internal.repository.InternalProtodroidRepositoryImpl
+import id.lukasdylan.grpc.protodroid.internal.ui.bind
 import id.lukasdylan.grpc.protodroid.internal.viewmodel.DetailViewModel
 import id.lukasdylan.grpc.protodroid.internal.viewmodel.DetailViewModelFactory
-import kotlinx.android.synthetic.main.protodroid_activity_detail.*
 
 class DetailActivity : AppCompatActivity() {
+
+    private val toolbar by bind<Toolbar>(R.id.toolbar)
+    private val viewPager by bind<ViewPager>(R.id.view_pager)
+    private val tabLayout by bind<TabLayout>(R.id.tab_layout)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,8 +40,8 @@ class DetailActivity : AppCompatActivity() {
         ViewModelProvider(this, DetailViewModelFactory(repository, selectedDataId))
             .get(DetailViewModel::class.java)
 
-        view_pager?.adapter = InformationPagerAdapter(supportFragmentManager)
-        tab_layout?.setupWithViewPager(view_pager)
+        viewPager?.adapter = InformationPagerAdapter(supportFragmentManager)
+        tabLayout?.setupWithViewPager(viewPager)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

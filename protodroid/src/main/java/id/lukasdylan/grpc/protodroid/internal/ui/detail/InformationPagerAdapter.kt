@@ -17,6 +17,6 @@ class InformationPagerAdapter(manager: FragmentManager) :
 
     override fun getCount(): Int = fragmentList.size
 
-    override fun getPageTitle(position: Int): CharSequence? = fragmentList[position].first
+    override fun getPageTitle(position: Int): CharSequence = fragmentList[position].first
 
 }

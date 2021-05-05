@@ -8,9 +8,10 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import id.lukasdylan.grpc.protodroid.R
+import id.lukasdylan.grpc.protodroid.internal.ui.bind
 import id.lukasdylan.grpc.protodroid.internal.viewmodel.DetailViewModel
-import kotlinx.android.synthetic.main.protodroid_fragment_information.*
 
 class InformationFragment : Fragment(), Observer<List<Pair<String, String>>> {
 
@@ -28,7 +29,8 @@ class InformationFragment : Fragment(), Observer<List<Pair<String, String>>> {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        rv_information?.apply {
+        val rvInformation by bind<RecyclerView>(R.id.rv_information)
+        rvInformation?.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = informationAdapter
         }

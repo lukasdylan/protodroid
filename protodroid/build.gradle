@@ -1,70 +1,17 @@
-apply plugin: 'com.android.library'
-
-apply plugin: 'kotlin-android'
-
-apply plugin: 'kotlin-android-extensions'
-
-apply plugin: 'kotlin-kapt'
-
-android {
-    compileSdkVersion 29
-    buildToolsVersion "29.0.3"
-    defaultConfig {
-        minSdkVersion 16
-        targetSdkVersion 29
-        versionCode 1
-        versionName "1.0.0"
-    }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-    }
-    sourceSets {
-        main.java.srcDirs += 'src/main/kotlin'
-        test.java.srcDirs += 'src/test/kotlin'
-    }
-    lintOptions {
-        // Do not complain about outdated deps, so that this can javax.annotation-api can be same
-        // as other projects in this repo. Your project is not required to do this, and can
-        // upgrade the dep.
-        disable 'GradleDependency'
-        disable 'UnusedResources'
-        textReport true
-        textOutput "stdout"
-        abortOnError false
-    }
-
-    androidExtensions {
-        experimental = true
-    }
-
-    testOptions {
-        unitTests {
-            includeAndroidResources = true
-            all {
-                useJUnitPlatform()
-            }
-        }
-    }
-
-    resourcePrefix 'protodroid_'
-}
-
-apply from: 'publish.gradle'
+apply from: "$rootDir/config/library.gradle"
+apply from: "$rootDir/config/publish.gradle"
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
-    implementation 'androidx.room:room-ktx:2.2.5'
-    implementation 'androidx.room:room-runtime:2.2.5'
-    implementation 'com.google.android.material:material:1.3.0-alpha02'
-    implementation 'io.grpc:grpc-protobuf-lite:1.30.2'
+    implementation 'androidx.room:room-ktx:2.3.0'
+    implementation 'androidx.room:room-runtime:2.3.0'
+    implementation 'com.google.android.material:material:1.4.0-alpha02'
+    implementation 'io.grpc:grpc-protobuf-lite:1.36.0'
     implementation 'com.jakewharton.timber:timber:4.7.1'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.7'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.7'
-    kapt "androidx.room:room-compiler:2.2.5"
-    testImplementation 'junit:junit:4.13'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.2'
+    kapt "androidx.room:room-compiler:2.3.0"
+    testImplementation 'junit:junit:4.13.2'
 }

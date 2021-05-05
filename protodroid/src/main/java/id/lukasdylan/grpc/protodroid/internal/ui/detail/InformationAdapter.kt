@@ -6,9 +6,9 @@ import android.view.ViewGroup
 import androidx.core.text.PrecomputedTextCompat
 import androidx.core.widget.TextViewCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.textview.MaterialTextView
 import id.lukasdylan.grpc.protodroid.R
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.protodroid_item_protodroid_detail_response.*
+import id.lukasdylan.grpc.protodroid.internal.ui.bindItem
 
 class InformationAdapter : RecyclerView.Adapter<InformationViewHolder>() {
 
@@ -33,17 +33,19 @@ class InformationAdapter : RecyclerView.Adapter<InformationViewHolder>() {
 
 }
 
-class InformationViewHolder(override val containerView: View) :
-    RecyclerView.ViewHolder(containerView), LayoutContainer {
+class InformationViewHolder(containerView: View) : RecyclerView.ViewHolder(containerView) {
 
-    private val params: PrecomputedTextCompat.Params = TextViewCompat.getTextMetricsParams(tv_value)
+    private val tvValue by bindItem<MaterialTextView>(R.id.tv_value)
+    private val tvLabel by bindItem<MaterialTextView>(R.id.tv_label)
+
+    private val params: PrecomputedTextCompat.Params = TextViewCompat.getTextMetricsParams(tvValue)
 
     init {
-        tv_value?.setTextIsSelectable(true)
+        tvValue?.setTextIsSelectable(true)
     }
 
     fun bind(item: Pair<String, String>) {
-        tv_label?.text = item.first
-        tv_value?.setTextFuture(PrecomputedTextCompat.getTextFuture(item.second, params, null))
+        tvLabel?.text = item.first
+        tvValue?.setTextFuture(PrecomputedTextCompat.getTextFuture(item.second, params, null))
     }
 }
