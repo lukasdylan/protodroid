@@ -5,10 +5,12 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import id.lukasdylan.grpc.protodroid.R
 import id.lukasdylan.grpc.protodroid.internal.Protodroid
 import id.lukasdylan.grpc.protodroid.internal.database.ProtodroidDataEntity
@@ -16,7 +18,6 @@ import id.lukasdylan.grpc.protodroid.internal.repository.InternalProtodroidRepos
 import id.lukasdylan.grpc.protodroid.internal.ui.detail.DetailActivity
 import id.lukasdylan.grpc.protodroid.internal.viewmodel.MainViewModel
 import id.lukasdylan.grpc.protodroid.internal.viewmodel.MainViewModelFactory
-import kotlinx.android.synthetic.main.protodroid_activity_main.*
 
 class MainActivity : AppCompatActivity(), Observer<List<ProtodroidDataEntity>> {
 
@@ -39,6 +40,9 @@ class MainActivity : AppCompatActivity(), Observer<List<ProtodroidDataEntity>> {
 
     private val linearLayoutManager = LinearLayoutManager(this)
 
+    private val toolbar by bind<Toolbar>(R.id.toolbar)
+    private val rvData by bind<RecyclerView>(R.id.rv_data)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.protodroid_activity_main)
@@ -47,7 +51,7 @@ class MainActivity : AppCompatActivity(), Observer<List<ProtodroidDataEntity>> {
             setSupportActionBar(this)
             title = applicationInfo.loadLabel(packageManager)
         }
-        rv_data?.apply {
+        rvData?.apply {
             layoutManager = linearLayoutManager
             addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
             adapter = dataResponseAdapter

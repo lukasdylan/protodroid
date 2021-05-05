@@ -1,0 +1,59 @@
+apply plugin: 'maven-publish'
+
+group = 'com.github.lukasdylan'
+version = generateVersionName()
+
+android {
+    defaultConfig {
+        versionName generateVersionName()
+        versionCode generateVersionCode()
+    }
+}
+
+tasks.withType(GenerateModuleMetadata) {
+    enabled = false
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            // Creates a Maven publication called "release".
+            release(MavenPublication) {
+                // Applies the component for the release build variant.
+                from components.release
+
+                // You can then customize attributes of the publication as shown below.
+                groupId = 'com.github.lukasdylan'
+                artifactId = 'protodroid-no-op'
+                version = generateVersionName()
+            }
+            // Creates a Maven publication called “debug”.
+            debug(MavenPublication) {
+                // Applies the component for the debug build variant.
+                from components.debug
+
+                groupId = 'com.github.lukasdylan'
+                artifactId = 'protodroid'
+                version = generateVersionName()
+            }
+        }
+    }
+}
+
+private String generateVersionName() {
+    def name = rootProject.appVersionString
+    if (project.hasProperty("versionName")) {
+        name = project.versionName
+    }
+    println("Version Name: " + name)
+    return name
+}
+
+private Integer generateVersionCode() {
+    def code = rootProject.appVersionCode
+    if (project.hasProperty("versionCode")) {
+        code = Integer.parseInt(versionCode)
+    }
+    println("Version Code: " + code)
+    return code
+}

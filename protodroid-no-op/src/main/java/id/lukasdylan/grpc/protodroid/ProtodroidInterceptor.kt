@@ -7,6 +7,7 @@ import io.grpc.*
 /**
  * Created by Lukas Dylan on 05/08/20.
  */
+@Suppress("UNUSED_PARAMETER")
 open class ProtodroidInterceptor(context: Context) : ClientInterceptor {
 
     override fun <ReqT, RespT> interceptCall(

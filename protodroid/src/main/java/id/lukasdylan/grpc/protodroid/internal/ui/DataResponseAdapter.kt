@@ -4,14 +4,14 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.textview.MaterialTextView
 import id.lukasdylan.grpc.protodroid.R
 import id.lukasdylan.grpc.protodroid.internal.ProtodroidDataDiffCallback
 import id.lukasdylan.grpc.protodroid.internal.database.ProtodroidDataEntity
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.protodroid_item_protodroid_response.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -31,9 +31,9 @@ class DataResponseAdapter(private val listener: (ProtodroidDataEntity) -> Unit) 
 }
 
 class DataResponseViewHolder(
-    override val containerView: View,
+    containerView: View,
     private val listener: (ProtodroidDataEntity) -> Unit
-) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+) : RecyclerView.ViewHolder(containerView) {
 
     private val successColorText: Int =
         ContextCompat.getColor(
@@ -53,28 +53,33 @@ class DataResponseViewHolder(
             android.R.color.holo_blue_dark
         )
 
+    private val tvServiceName by bindItem<MaterialTextView>(R.id.tv_service_name)
+    private val tvStatus by bindItem<MaterialTextView>(R.id.tv_status)
+    private val tvLastUpdated by bindItem<MaterialTextView>(R.id.tv_last_updated)
+    private val rootLayout by bindItem<ConstraintLayout>(R.id.root_layout)
+
     @SuppressLint("SetTextI18n")
     fun bind(item: ProtodroidDataEntity) {
         val services = item.serviceName.split("/")
-        tv_service_name?.text = services.getOrElse(1) {
+        tvServiceName?.text = services.getOrElse(1) {
             item.serviceName
         }
-        tv_status?.text = when (item.statusCode) {
+        tvStatus?.text = when (item.statusCode) {
             STATUS_CODE_ON_PROGRESS -> {
-                tv_status?.setTextColor(onProgressColorText)
+                tvStatus?.setTextColor(onProgressColorText)
                 "On Progress..."
             }
             STATUS_CODE_OK -> {
-                tv_status?.setTextColor(successColorText)
+                tvStatus?.setTextColor(successColorText)
                 "${item.statusName} (${item.statusCode})"
             }
             else -> {
-                tv_status?.setTextColor(failedColorText)
+                tvStatus?.setTextColor(failedColorText)
                 "${item.statusName} (${item.statusCode})"
             }
         }
-        tv_last_updated?.text = "Last Updated: ${getFormattedDate(item.lastUpdatedAt)}"
-        root_layout?.setOnClickListener {
+        tvLastUpdated?.text = "Last Updated: ${getFormattedDate(item.lastUpdatedAt)}"
+        rootLayout?.setOnClickListener {
             listener.invoke(item)
         }
     }
