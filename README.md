@@ -2,8 +2,7 @@
 
 Android Library for GRPC Network Interceptor
 
-
-[ ![Download](https://api.bintray.com/packages/lukasdylan/Protodroid/protodroid/images/download.svg) ](https://bintray.com/lukasdylan/Protodroid/protodroid/_latestVersion)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.lukasdylan/protodroid/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.lukasdylan/protodroid)
 
 <h3>What is Protodroid?</h3>
 
