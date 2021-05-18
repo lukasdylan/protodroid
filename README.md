@@ -2,7 +2,13 @@
 
 Android Library for GRPC Network Interceptor
 
+<h5>Debug Mode</h5>
+
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.lukasdylan/protodroid/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.lukasdylan/protodroid)
+
+<h5>Production (no-op) Mode</h5>
+
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.lukasdylan/protodroid-no-op/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.lukasdylan/protodroid-no-op)
 
 <h3>What is Protodroid?</h3>
 
