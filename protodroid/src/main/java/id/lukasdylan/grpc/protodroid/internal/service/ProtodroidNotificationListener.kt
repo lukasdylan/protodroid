@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import id.lukasdylan.grpc.protodroid.R
 import id.lukasdylan.grpc.protodroid.internal.ui.MainActivity
 
@@ -15,7 +16,7 @@ import id.lukasdylan.grpc.protodroid.internal.ui.MainActivity
  * Created by Lukas Dylan on 05/08/20.
  */
 interface ProtodroidNotificationListener {
-    fun sendNotification(title: String, message: String, dataId: Long, serviceName: String)
+    fun sendNotification(title: String, message: String, dataId: Long, serviceName: String, serviceGroup: String)
 }
 
 internal class ProtodroidNotificationListenerImpl(private val context: Context) :
@@ -25,12 +26,11 @@ internal class ProtodroidNotificationListenerImpl(private val context: Context) 
         title: String,
         message: String,
         dataId: Long,
-        serviceName: String
+        serviceName: String,
+        serviceGroup: String
     ) {
-        val notificationManager =
-            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager = NotificationManagerCompat.from(context)
 
-        val notificationId = 1
         val channelId = "protodroid-channel-id"
         val channelName = "Protodroid Channel"
 
@@ -41,23 +41,6 @@ internal class ProtodroidNotificationListenerImpl(private val context: Context) 
             notificationManager.createNotificationChannel(mChannel)
         }
 
-        val summaryNotification = NotificationCompat.Builder(context, channelId)
-            .setContentTitle(title)
-            .setContentText(message)
-            .setSmallIcon(R.drawable.protodroid_icon_notification)
-            .setStyle(NotificationCompat.InboxStyle())
-            .setGroup("protodroid-group")
-            .setGroupSummary(true)
-            .build()
-
-        val mBuilder = NotificationCompat.Builder(context, channelId)
-            .setSmallIcon(R.drawable.protodroid_icon_notification)
-            .setContentTitle(title)
-            .setContentText(message)
-            .setStyle(NotificationCompat.BigTextStyle().bigText(message))
-            .setGroup("protodroid-group")
-            .setAutoCancel(true)
-
         val intent = Intent(context, MainActivity::class.java).apply {
             putExtra("id", dataId)
             putExtra("service_name", serviceName)
@@ -66,13 +49,21 @@ internal class ProtodroidNotificationListenerImpl(private val context: Context) 
 
         val pendingIntent: PendingIntent = PendingIntent.getActivity(
             context,
-            0,
+            dataId.toInt(),
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT
         )
-        mBuilder.setContentIntent(pendingIntent)
 
-        notificationManager.notify(notificationId, summaryNotification)
-        notificationManager.notify(System.currentTimeMillis().toInt(), mBuilder.build())
+        val builder = NotificationCompat.Builder(context, channelId)
+            .setSmallIcon(R.drawable.protodroid_icon_notification)
+            .setContentTitle(title)
+            .setContentText(message)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(message))
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setContentIntent(pendingIntent)
+            .setSilent(true)
+            .build()
+
+        notificationManager.notify(dataId.toInt(), builder)
     }
 }
