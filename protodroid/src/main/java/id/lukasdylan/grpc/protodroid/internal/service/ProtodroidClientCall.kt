@@ -69,7 +69,11 @@ internal class ProtodroidClientCall<RequestObject, ResponseObject>(
                 },
                 message = "${state.status?.code?.name} (${state.status?.code?.value()})",
                 dataId = id ?: 0L,
-                serviceName = state.serviceName
+                serviceName = state.serviceName,
+                serviceGroup = state.serviceName
+                    .split("/")
+                    .getOrNull(0)?.replace("proto.", "")
+                    .orEmpty()
             )
         }
     }

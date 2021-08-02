@@ -1,9 +1,9 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.kotlin_version = '1.4.32'
-    ext.appVersionString = "1.0.7"
-    ext.appVersionCode = 2
+    ext.kotlin_version = '1.5.20'
+    ext.appVersionString = "1.0.14"
+    ext.appVersionCode = 8
     repositories {
         google()
         jcenter()
@@ -19,7 +19,6 @@ buildscript {
 
 plugins {
     id 'maven-publish'
-    id "org.jetbrains.kotlin.android" version "1.4.20" apply false
 }
 
 allprojects {
