@@ -1,16 +1,13 @@
 package id.lukasdylan.grpc.protodroid.internal.database
 
-import android.os.Parcelable
 import androidx.annotation.Keep
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import kotlinx.parcelize.Parcelize
 
 @Keep
-@Parcelize
 @Entity
-data class ProtodroidDataEntity(
+internal data class ProtodroidDataEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     val id: Long = 0,
@@ -50,4 +47,4 @@ data class ProtodroidDataEntity(
 
     @ColumnInfo(name = "update_timestamp")
     val lastUpdatedAt: Long = System.currentTimeMillis()
-) : Parcelable
+)

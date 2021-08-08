@@ -1,25 +1,38 @@
 package id.lukasdylan.grpc.protodroid.internal.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import id.lukasdylan.grpc.protodroid.internal.database.ProtodroidDataEntity
 import id.lukasdylan.grpc.protodroid.internal.repository.InternalProtodroidRepository
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
-class DetailViewModel(repository: InternalProtodroidRepository, dataId: Long) : ViewModel() {
+internal class DetailViewModel(private val repository: InternalProtodroidRepository) : ViewModel() {
 
-    private val detailResponse = repository.fetchSingleData(dataId)
-    val overviewInfo: LiveData<List<Pair<String, String>>> = Transformations.map(detailResponse) {
+    private val detailResponse = MutableSharedFlow<ProtodroidDataEntity>()
+    val overviewInfo: Flow<List<Pair<String, String>>> = detailResponse.map {
         return@map it.transformToOverviewInformation()
     }
-    val requestInfo: LiveData<List<Pair<String, String>>> = Transformations.map(detailResponse) {
+    val requestInfo: Flow<List<Pair<String, String>>> = detailResponse.map {
         return@map it.transformToRequestInformation()
     }
-    val responseInfo: LiveData<List<Pair<String, String>>> = Transformations.map(detailResponse) {
+    val responseInfo: Flow<List<Pair<String, String>>> = detailResponse.map {
         return@map it.transformToResponseInformation()
+    }
+    val title: Flow<String> = detailResponse.map {
+        it.serviceName.split("/").getOrNull(1).orEmpty()
+    }
+
+    fun fetchDetail(dataId: Long) {
+        viewModelScope.launch {
+            repository.fetchSingleData(dataId = dataId)
+                .collect {
+                    detailResponse.emit(it)
+                }
+        }
     }
 
     private fun ProtodroidDataEntity.transformToOverviewInformation(): List<Pair<String, String>> {
@@ -77,20 +90,19 @@ class DetailViewModel(repository: InternalProtodroidRepository, dataId: Long) : 
     }
 
     private fun getFormattedDate(timeInMillis: Long): String {
-        val formatter = SimpleDateFormat("d MMM yyyy HH:mm:ss.SSS", Locale.getDefault())
+        val formatter = SimpleDateFormat("d MMM yyyy HH:mm:ss.SSS", Locale.ENGLISH)
         return formatter.format(Date(timeInMillis))
     }
 }
 
 internal class DetailViewModelFactory(
     private val repository: InternalProtodroidRepository,
-    private val dataId: Long
 ) : ViewModelProvider.Factory {
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(DetailViewModel::class.java)) {
-            return DetailViewModel(repository, dataId) as T
+            return DetailViewModel(repository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

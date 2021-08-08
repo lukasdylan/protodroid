@@ -2,19 +2,29 @@ package id.lukasdylan.grpc.protodroid.internal.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
+import id.lukasdylan.grpc.protodroid.internal.database.ProtodroidDataEntity
 import id.lukasdylan.grpc.protodroid.internal.repository.InternalProtodroidRepository
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-internal class MainViewModel(private val repository: InternalProtodroidRepository) : ViewModel(),
-    CoroutineScope by MainScope() {
+internal class MainViewModel(private val repository: InternalProtodroidRepository) : ViewModel() {
 
-    val dataResponseLiveData = repository.fetchAllData()
+    private val _dataResponse = MutableStateFlow<List<ProtodroidDataEntity>>(emptyList())
+    val dataResponse: Flow<List<ProtodroidDataEntity>> = _dataResponse
+
+    init {
+        viewModelScope.launch {
+            repository.fetchAllData().collect {
+                _dataResponse.emit(it)
+            }
+        }
+    }
 
     fun deleteAllData() {
-        launch(Dispatchers.IO) {
+        viewModelScope.launch {
             repository.deleteAllData()
         }
     }

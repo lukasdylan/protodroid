@@ -14,8 +14,8 @@ internal class ProtodroidClientCall<RequestObject, ResponseObject>(
     method: MethodDescriptor<RequestObject, ResponseObject>,
     callOptions: CallOptions,
     channel: Channel,
-    private val repository: ProtodroidRepository?,
-    private val protodroidNotificationListener: ProtodroidNotificationListener?
+    private val repository: ProtodroidRepository,
+    private val protodroidNotificationListener: ProtodroidNotificationListener
 ) : ForwardingClientCall.SimpleForwardingClientCall<RequestObject, ResponseObject>(
     channel.newCall(method, callOptions)
 ), CoroutineScope by MainScope(), ProtodroidResponseListener {
@@ -27,7 +27,7 @@ internal class ProtodroidClientCall<RequestObject, ResponseObject>(
 
     override fun sendMessage(message: RequestObject) {
         state = state.copy(requestBody = message.toString())
-        printLogRequest(state)
+        state.printLogRequest()
         super.sendMessage(message)
     }
 
@@ -58,19 +58,20 @@ internal class ProtodroidClientCall<RequestObject, ResponseObject>(
     }
 
     override fun onFinalState() {
-        printLogFullResponse(state)
+        val finalState = state
+        finalState.printLogFullResponse()
         launch {
             val id = withContext(Dispatchers.IO) {
-                repository?.saveNewData(state)
+                repository.saveNewData(finalState)
             }
-            protodroidNotificationListener?.sendNotification(
-                title = state.serviceName.split("/").getOrElse(1) {
-                    state.serviceName
+            protodroidNotificationListener.sendNotification(
+                title = finalState.serviceName.split("/").getOrElse(1) {
+                    finalState.serviceName
                 },
-                message = "${state.status?.code?.name} (${state.status?.code?.value()})",
-                dataId = id ?: 0L,
-                serviceName = state.serviceName,
-                serviceGroup = state.serviceName
+                message = "${finalState.status?.code?.name} (${finalState.status?.code?.value()})",
+                dataId = id,
+                serviceName = finalState.serviceName,
+                serviceGroup = finalState.serviceName
                     .split("/")
                     .getOrNull(0)?.replace("proto.", "")
                     .orEmpty()
