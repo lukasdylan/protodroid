@@ -2,30 +2,30 @@ package id.lukasdylan.grpc.protodroid.internal
 
 import timber.log.Timber
 
-internal fun printLogRequest(lastState: DataState) {
+internal fun DataState.printLogRequest() {
     val stringBuilder = StringBuilder(".")
         .appendLine()
         .appendLine("----- Service URL: -----")
-        .appendLine(lastState.serviceUrl)
+        .appendLine(serviceUrl)
         .appendLine("----- Service Name: -----")
-        .appendLine(lastState.serviceName)
+        .appendLine(serviceName)
         .appendLine("----- Request Header: -----")
-        .appendLine(lastState.requestHeader)
+        .appendLine(requestHeader)
         .appendLine("----- Request Body: -----")
-        .appendLine(lastState.requestBody)
+        .appendLine(requestBody)
     Timber.tag("GRPC").d(stringBuilder.toString())
 }
 
-internal fun printLogFullResponse(lastState: DataState) {
+internal fun DataState.printLogFullResponse() {
     val stringBuilder = StringBuilder(".")
         .appendLine()
         .appendLine("----- Service URL: -----")
-        .appendLine(lastState.serviceUrl)
+        .appendLine(serviceUrl)
         .appendLine("----- Service Name: -----")
-        .appendLine(lastState.serviceName)
+        .appendLine(serviceName)
         .appendLine("----- Response Header: -----")
-        .appendLine(lastState.responseHeader)
+        .appendLine(responseHeader)
         .appendLine("----- Response Body: -----")
-        .appendLine(lastState.responseBody)
+        .appendLine(responseBody)
     Timber.tag("GRPC").d(stringBuilder.toString())
 }

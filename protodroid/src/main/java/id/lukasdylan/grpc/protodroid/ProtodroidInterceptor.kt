@@ -12,8 +12,8 @@ import io.grpc.*
  */
 open class ProtodroidInterceptor(context: Context) : ClientInterceptor {
 
-    private var repository: ProtodroidRepository? = null
-    private var notificationListener: ProtodroidNotificationListener? = null
+    private val repository: ProtodroidRepository
+    private val notificationListener: ProtodroidNotificationListener
 
     init {
         with(Protodroid.getInstance(context.applicationContext)) {

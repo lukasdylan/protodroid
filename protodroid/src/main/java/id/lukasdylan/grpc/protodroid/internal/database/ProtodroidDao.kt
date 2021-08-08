@@ -1,10 +1,10 @@
 package id.lukasdylan.grpc.protodroid.internal.database
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import kotlinx.coroutines.flow.Flow
 
 /**
  * Created by Lukas Dylan on 05/08/20.
@@ -13,10 +13,10 @@ import androidx.room.Query
 internal interface ProtodroidDao {
 
     @Query("SELECT * FROM protodroiddataentity ORDER BY ID DESC")
-    fun fetchAllData(): LiveData<List<ProtodroidDataEntity>>
+    fun fetchAllData(): Flow<List<ProtodroidDataEntity>>
 
     @Query("SELECT * FROM protodroiddataentity WHERE id = :dataId LIMIT 1")
-    fun fetchSingleDataById(dataId: Long): LiveData<ProtodroidDataEntity>
+    fun fetchSingleDataById(dataId: Long): Flow<ProtodroidDataEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertData(entity: ProtodroidDataEntity): Long

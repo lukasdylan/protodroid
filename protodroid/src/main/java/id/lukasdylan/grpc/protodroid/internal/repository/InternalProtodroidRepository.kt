@@ -1,23 +1,33 @@
 package id.lukasdylan.grpc.protodroid.internal.repository
 
-import androidx.lifecycle.LiveData
 import id.lukasdylan.grpc.protodroid.internal.database.ProtodroidDao
 import id.lukasdylan.grpc.protodroid.internal.database.ProtodroidDataEntity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
 
-interface InternalProtodroidRepository {
-    fun fetchAllData(): LiveData<List<ProtodroidDataEntity>>
-    fun fetchSingleData(dataId: Long): LiveData<ProtodroidDataEntity>
+internal interface InternalProtodroidRepository {
+    suspend fun fetchAllData(): Flow<List<ProtodroidDataEntity>>
+    suspend fun fetchSingleData(dataId: Long): Flow<ProtodroidDataEntity>
     suspend fun deleteAllData()
 }
 
-internal class InternalProtodroidRepositoryImpl(private val dao: ProtodroidDao) : InternalProtodroidRepository {
+internal class InternalProtodroidRepositoryImpl(private val dao: ProtodroidDao) :
+    InternalProtodroidRepository {
 
     override suspend fun deleteAllData() {
-        dao.deleteAllData()
+        withContext(Dispatchers.IO) {
+            dao.deleteAllData()
+        }
     }
 
-    override fun fetchAllData(): LiveData<List<ProtodroidDataEntity>> = dao.fetchAllData()
+    override suspend fun fetchAllData(): Flow<List<ProtodroidDataEntity>> =
+        withContext(Dispatchers.IO) {
+            dao.fetchAllData()
+        }
 
-    override fun fetchSingleData(dataId: Long): LiveData<ProtodroidDataEntity> =
-        dao.fetchSingleDataById(dataId)
+    override suspend fun fetchSingleData(dataId: Long): Flow<ProtodroidDataEntity> =
+        withContext(Dispatchers.IO) {
+            dao.fetchSingleDataById(dataId)
+        }
 }

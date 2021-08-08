@@ -4,17 +4,26 @@
     <application>
 
         <activity
-            android:name=".internal.ui.MainActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:taskAffinity="id.lukasdylan.grpc.protodroid.task"
-            android:theme="@style/Protodroid.Theme" />
+            android:name=".internal.ui.ProtodroidActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:taskAffinity=""
+            android:excludeFromRecents="true"
+            android:screenOrientation="portrait">
 
-        <activity
-            android:name=".internal.ui.detail.DetailActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/Protodroid.Theme" />
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="detail"
+                    android:scheme="protodroid" />
+
+            </intent-filter>
+
+        </activity>
 
     </application>
+
 </manifest>

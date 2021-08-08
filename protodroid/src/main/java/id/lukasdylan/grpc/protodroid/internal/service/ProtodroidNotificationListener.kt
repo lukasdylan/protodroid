@@ -8,14 +8,13 @@ import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.net.toUri
 import id.lukasdylan.grpc.protodroid.R
-import id.lukasdylan.grpc.protodroid.internal.ui.MainActivity
-
 
 /**
  * Created by Lukas Dylan on 05/08/20.
  */
-interface ProtodroidNotificationListener {
+internal interface ProtodroidNotificationListener {
     fun sendNotification(title: String, message: String, dataId: Long, serviceName: String, serviceGroup: String)
 }
 
@@ -41,10 +40,8 @@ internal class ProtodroidNotificationListenerImpl(private val context: Context) 
             notificationManager.createNotificationChannel(mChannel)
         }
 
-        val intent = Intent(context, MainActivity::class.java).apply {
-            putExtra("id", dataId)
-            putExtra("service_name", serviceName)
-            putExtra("open_detail", true)
+        val intent = Intent(Intent.ACTION_VIEW, "protodroid://detail/$dataId".toUri()).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
 
         val pendingIntent: PendingIntent = PendingIntent.getActivity(
@@ -61,6 +58,7 @@ internal class ProtodroidNotificationListenerImpl(private val context: Context) 
             .setStyle(NotificationCompat.BigTextStyle().bigText(message))
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
             .setSilent(true)
             .build()
 
