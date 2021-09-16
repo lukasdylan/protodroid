@@ -21,15 +21,20 @@ Protodroid was built to help Engineering Team especially QA Team to verify the A
 For Frontend Android Team, you can also check in LogCat Android Studio as this library provide logging for the API calls. 
 
 <h3>How to use Protodroid?</h3>
+<h2>New Update!!</h4>
+
+Currently Protodroid have 2 versions:
+- Jetpack Compose version (starting from `1.1.0` later)
+- Non-compose version (starting until `1.0.x`)
 
 Make sure your project specification meet this requirements:
 - AndroidX
-- Min Android SDK: 16 (Jelly Bean)
+- Min Android SDK: 16 (Jelly Bean) for non-compose version, and 21 (Lollipop) for Jetpack Compose version
 
 Follow this step to implement this library:
 1. Make sure you already added 
 `implementation 'com.github.lukasdylan:protodroid:<latest_version>' `
-into your module. (note: check the latest version [here](https://bintray.com/lukasdylan/Protodroid/protodroid))
+into your module. (note: check the latest version [here](https://search.maven.org/artifact/io.github.lukasdylan/protodroid))
 
 2. Don’t forget to exclude `io.grpc.grpc-protobuf-lite` module if you already implement `io.grpc.grpc-protobuf` dependency 
    `implementation 'com.github.lukasdylan:protodroid:<latest_version>' {`
