@@ -2,6 +2,7 @@ package id.lukasdylan.grpc.protodroid.internal.ui
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -9,11 +10,16 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.*
+import androidx.compose.material.Card
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ArrowBack
-import androidx.compose.material.icons.rounded.Clear
-import androidx.compose.material.icons.rounded.Delete
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
@@ -22,6 +28,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import id.lukasdylan.grpc.protodroid.internal.database.ProtodroidDataEntity
 import id.lukasdylan.grpc.protodroid.internal.viewmodel.MainViewModel
 import kotlinx.coroutines.Dispatchers
@@ -38,7 +45,8 @@ internal object MainScreen {
 internal fun MainScreen(
     viewModel: MainViewModel,
     title: String,
-    onSelectedDataLog: (ProtodroidDataEntity) -> Unit
+    onSelectedDataLog: (ProtodroidDataEntity) -> Unit,
+    onClearAllDataListener: () -> Unit
 ) {
     val data = viewModel.dataResponse.collectAsState(emptyList(), Dispatchers.Main.immediate)
     MainScreen(
@@ -47,6 +55,7 @@ internal fun MainScreen(
         onSelectedDataLog = onSelectedDataLog,
         onClearAllDataListener = {
             viewModel.deleteAllData()
+            onClearAllDataListener.invoke()
         })
 }
 
@@ -76,7 +85,8 @@ private fun MainScreen(
                         Text(
                             text = "$title GRPC Logger",
                             fontFamily = FontFamily.Monospace,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp
                         )
                         Text(
                             text = "by Protodroid",
@@ -88,7 +98,7 @@ private fun MainScreen(
                 actions = {
                     IconButton(onClick = onClearAllDataListener) {
                         Icon(
-                            Icons.Rounded.Delete,
+                            Icons.Outlined.Delete,
                             contentDescription = "",
                             tint = MaterialTheme.colors.onSurface
                         )
@@ -98,13 +108,12 @@ private fun MainScreen(
         }) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            state = lazyListState
+            state = lazyListState,
+            contentPadding = PaddingValues(12.dp)
         ) {
             items(listOfDataLog) {
                 DataLog(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 12.dp, vertical = 6.dp),
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
                     entity = it,
                     onSelectedDataLog = onSelectedDataLog
                 )
@@ -137,7 +146,8 @@ private fun DataLog(
                 fontFamily = FontFamily.Monospace,
                 style = MaterialTheme.typography.h6,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colors.onSurface
+                color = MaterialTheme.colors.onSurface,
+                fontSize = 18.sp
             )
             Text(
                 modifier = Modifier
@@ -145,7 +155,6 @@ private fun DataLog(
                     .padding(top = 4.dp),
                 text = "${entity.statusName} (${entity.statusCode})",
                 fontFamily = FontFamily.Monospace,
-                fontWeight = FontWeight.SemiBold,
                 style = MaterialTheme.typography.subtitle1,
                 color = when (entity.statusCode) {
                     0 -> Color(0xff669900)

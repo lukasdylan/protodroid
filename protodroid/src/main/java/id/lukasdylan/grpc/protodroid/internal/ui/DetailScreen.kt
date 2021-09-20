@@ -1,32 +1,62 @@
 package id.lukasdylan.grpc.protodroid.internal.ui
 
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.*
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.ScaffoldState
+import androidx.compose.material.SnackbarResult
+import androidx.compose.material.Tab
+import androidx.compose.material.TabRow
+import androidx.compose.material.TabRowDefaults
+import androidx.compose.material.Text
+import androidx.compose.material.TextButton
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ArrowBack
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.rememberScaffoldState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.pager.*
+import androidx.compose.ui.unit.sp
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.PagerState
+import com.google.accompanist.pager.pagerTabIndicatorOffset
+import com.google.accompanist.pager.rememberPagerState
 import id.lukasdylan.grpc.protodroid.internal.viewmodel.DetailViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 internal object DetailScreen {
     const val SCREEN_NAME = "detail"
+
+    fun deeplink(dataId: String): String {
+        return "protodroid://$SCREEN_NAME/$dataId"
+    }
 }
 
 internal typealias LabelValue = Pair<String, String>
@@ -35,7 +65,7 @@ internal typealias LabelValue = Pair<String, String>
 internal fun DetailScreen(
     viewModel: DetailViewModel,
     dataId: Long,
-    onCopyListener: (String) -> Unit,
+    onCopyListener: (String, String) -> Unit,
     onBackListener: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
@@ -48,10 +78,19 @@ internal fun DetailScreen(
     viewModel.fetchDetail(dataId = dataId)
 
     DetailScreen(
-        title = viewModel.title.collectAsState(initial = "").value,
-        dataOverviews = viewModel.overviewInfo.collectAsState(initial = emptyList()).value,
-        dataRequest = viewModel.requestInfo.collectAsState(initial = emptyList()).value,
-        dataResponse = viewModel.responseInfo.collectAsState(initial = emptyList()).value,
+        title = viewModel.title.collectAsState(initial = "", Dispatchers.Main.immediate).value,
+        dataOverviews = viewModel.overviewInfo.collectAsState(
+            initial = emptyList(),
+            Dispatchers.Main.immediate
+        ).value,
+        dataRequest = viewModel.requestInfo.collectAsState(
+            initial = emptyList(),
+            Dispatchers.Main.immediate
+        ).value,
+        dataResponse = viewModel.responseInfo.collectAsState(
+            initial = emptyList(),
+            Dispatchers.Main.immediate
+        ).value,
         onBackListener = onBackListener,
         onCopyListener = onCopyListener
     )
@@ -65,7 +104,7 @@ private fun DetailScreen(
     dataOverviews: List<LabelValue>,
     dataRequest: List<LabelValue>,
     dataResponse: List<LabelValue>,
-    onCopyListener: (String) -> Unit,
+    onCopyListener: (String, String) -> Unit,
     onBackListener: () -> Unit
 ) {
     val snackbarVisibleState = remember { mutableStateOf(false) }
@@ -77,22 +116,19 @@ private fun DetailScreen(
             TopAppBar(
                 modifier = Modifier.fillMaxWidth(),
                 elevation = 0.dp,
-                backgroundColor = if (isSystemInDarkTheme()) {
-                    Color.Black
-                } else {
-                    Color.White
-                },
+                backgroundColor = MaterialTheme.colors.surface,
                 contentColor = MaterialTheme.colors.onSurface,
                 title = {
                     Text(
                         text = title,
                         fontFamily = FontFamily.Monospace,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
                     )
                 },
                 navigationIcon = {
                     IconButton(onClick = onBackListener) {
-                        Icon(Icons.Rounded.ArrowBack, contentDescription = "")
+                        Icon(Icons.Filled.ArrowBack, contentDescription = "")
                     }
                 }
             )
@@ -100,20 +136,19 @@ private fun DetailScreen(
         val tabMenus = listOf("Overview", "Request", "Response")
         val pagerState = rememberPagerState(
             pageCount = tabMenus.size,
-            initialOffscreenLimit = tabMenus.size - 1,
+            initialOffscreenLimit = tabMenus.lastIndex,
             initialPage = 0
         )
-        val tabIndex = pagerState.currentPage
+
         DetailTabMenu(
             pagerState = pagerState,
             tabMenus = tabMenus,
             dataOverviews = dataOverviews,
             dataRequest = dataRequest,
             dataResponse = dataResponse,
-            selectedTabIndex = tabIndex,
-            onCopyListener = {
+            onCopyListener = { label, value ->
                 snackbarVisibleState.value = true
-                onCopyListener.invoke(it)
+                onCopyListener.invoke(label, value)
             }
         )
     }
@@ -139,19 +174,14 @@ private fun DetailTabMenu(
     dataOverviews: List<LabelValue>,
     dataRequest: List<LabelValue>,
     dataResponse: List<LabelValue>,
-    selectedTabIndex: Int = 0,
-    onCopyListener: (String) -> Unit
+    onCopyListener: (String, String) -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
     Column {
         TabRow(
-            backgroundColor = if (isSystemInDarkTheme()) {
-                Color.Black
-            } else {
-                Color.White
-            },
+            backgroundColor = MaterialTheme.colors.surface,
             contentColor = MaterialTheme.colors.onSurface,
-            selectedTabIndex = selectedTabIndex,
+            selectedTabIndex = 0,
             indicator = { tabPositions ->
                 TabRowDefaults.Indicator(
                     Modifier.pagerTabIndicatorOffset(pagerState, tabPositions)
@@ -159,7 +189,7 @@ private fun DetailTabMenu(
             }
         ) {
             tabMenus.forEachIndexed { index, title ->
-                Tab(selected = selectedTabIndex == index, onClick = {
+                Tab(selected = 0 == index, onClick = {
                     coroutineScope.launch {
                         pagerState.animateScrollToPage(index)
                     }
@@ -168,7 +198,8 @@ private fun DetailTabMenu(
                         text = title.uppercase(),
                         color = MaterialTheme.colors.onSurface,
                         fontFamily = FontFamily.Monospace,
-                        fontWeight = FontWeight.SemiBold
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 12.sp
                     )
                 })
             }
@@ -190,24 +221,12 @@ private fun DetailTabMenu(
                 }
 
                 item {
-                    Button(
-                        onClick = {
-                            val formattedText = data.joinToString("\n") {
-                                "${it.first} = ${it.second}"
-                            }
-                            onCopyListener(formattedText)
-                        },
-                        elevation = null,
-                        colors = ButtonDefaults.outlinedButtonColors(),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        content = {
-                            Text(
-                                text = "Copy Screen Information ".uppercase(),
-                                style = MaterialTheme.typography.button
-                            )
-                        })
+                    CopyItem {
+                        val formattedText = data.joinToString("\n") {
+                            "${it.first} = ${it.second}"
+                        }
+                        onCopyListener(tabMenus[index], formattedText)
+                    }
                 }
 
             }
@@ -219,7 +238,7 @@ private fun DetailTabMenu(
 private fun DetailItem(labelValue: LabelValue) {
     Column(modifier = Modifier.fillMaxWidth()) {
         val labelBackgroundColor = if (isSystemInDarkTheme()) {
-            Color.Black
+            Color(0xFF333333)
         } else {
             Color(0xFFEEEEEE)
         }
@@ -248,6 +267,24 @@ private fun DetailItem(labelValue: LabelValue) {
 }
 
 @Composable
+private fun CopyItem(onCopyListener: () -> Unit) {
+    TextButton(
+        onClick = onCopyListener,
+        colors = ButtonDefaults.outlinedButtonColors(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        content = {
+            Text(
+                text = "Copy Screen Information ".uppercase(),
+                style = MaterialTheme.typography.button,
+            )
+        },
+        contentPadding = PaddingValues(0.dp)
+    )
+}
+
+@Composable
 @Preview
 private fun Preview_DetailScreen() {
     DetailScreen(
@@ -255,7 +292,20 @@ private fun Preview_DetailScreen() {
         dataOverviews = listOf("Label" to "Value", "Test" to "Test"),
         dataRequest = emptyList(),
         dataResponse = emptyList(),
-        onCopyListener = {},
+        onCopyListener = { _, _ -> },
+        onBackListener = {}
+    )
+}
+
+@Composable
+@Preview(uiMode = UI_MODE_NIGHT_YES)
+private fun Preview_DetailScreen_DarkMode() {
+    DetailScreen(
+        title = "Service Name",
+        dataOverviews = listOf("Label" to "Value", "Test" to "Test"),
+        dataRequest = emptyList(),
+        dataResponse = emptyList(),
+        onCopyListener = { _, _ -> },
         onBackListener = {}
     )
 }

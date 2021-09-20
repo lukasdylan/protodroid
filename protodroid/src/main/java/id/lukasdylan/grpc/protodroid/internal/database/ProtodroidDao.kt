@@ -19,8 +19,8 @@ internal interface ProtodroidDao {
     fun fetchSingleDataById(dataId: Long): Flow<ProtodroidDataEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertData(entity: ProtodroidDataEntity): Long
+    suspend fun insertData(entity: ProtodroidDataEntity): Long
 
     @Query("DELETE FROM protodroiddataentity")
-    fun deleteAllData()
+    suspend fun deleteAllData()
 }

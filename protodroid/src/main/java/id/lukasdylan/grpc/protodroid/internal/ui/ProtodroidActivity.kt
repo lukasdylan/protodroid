@@ -13,6 +13,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.ui.Modifier
+import androidx.core.app.NotificationManagerCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -56,13 +57,18 @@ internal class ProtodroidActivity : ComponentActivity() {
                             title = applicationInfo.loadLabel(packageManager).toString(),
                             onSelectedDataLog = {
                                 navHostController.navigate(route = "${DetailScreen.SCREEN_NAME}?id=${it.id}")
+                            },
+                            onClearAllDataListener = {
+                                val notificationManager =
+                                    NotificationManagerCompat.from(applicationContext)
+                                notificationManager.cancelAll()
                             }
                         )
                     }
                     composable(
                         route = "${DetailScreen.SCREEN_NAME}?id={id}",
                         deepLinks = listOf(navDeepLink {
-                            uriPattern = "protodroid://detail/{id}"
+                            uriPattern = DetailScreen.deeplink("{id}")
                         })
                     ) {
                         val dataId = it.arguments?.getString("id")?.toLong() ?: 0L
@@ -72,10 +78,10 @@ internal class ProtodroidActivity : ComponentActivity() {
                         DetailScreen(
                             viewModel = detailViewModel,
                             dataId = dataId,
-                            onCopyListener = { text ->
+                            onCopyListener = { label, text ->
                                 val clipboard =
                                     getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                                val clip: ClipData = ClipData.newPlainText("protodroid", text)
+                                val clip = ClipData.newPlainText("protodroid $label", text)
                                 clipboard.setPrimaryClip(clip)
                             },
                             onBackListener = {
