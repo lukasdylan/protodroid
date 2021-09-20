@@ -1,9 +1,9 @@
 package id.lukasdylan.grpc.protodroid.internal.service
 
-import id.lukasdylan.grpc.protodroid.internal.DataState
+import id.lukasdylan.grpc.protodroid.DataState
+import id.lukasdylan.grpc.protodroid.Protodroid
 import id.lukasdylan.grpc.protodroid.internal.printLogFullResponse
 import id.lukasdylan.grpc.protodroid.internal.printLogRequest
-import id.lukasdylan.grpc.protodroid.internal.repository.ProtodroidRepository
 import io.grpc.*
 import kotlinx.coroutines.*
 
@@ -15,11 +15,10 @@ internal class ProtodroidClientCall<RequestObject, ResponseObject>(
     method: MethodDescriptor<RequestObject, ResponseObject>,
     callOptions: CallOptions,
     channel: Channel,
-    private val repository: ProtodroidRepository,
-    private val notificationListener: ProtodroidNotificationListener
+    private val protodroid: Protodroid
 ) : ForwardingClientCall.SimpleForwardingClientCall<RequestObject, ResponseObject>(
     channel.newCall(method, callOptions)
-), ProtodroidResponseListener {
+), CoroutineScope by MainScope(), ProtodroidResponseListener {
 
     private var state = DataState(
         serviceUrl = channel.authority().orEmpty(),
@@ -28,12 +27,12 @@ internal class ProtodroidClientCall<RequestObject, ResponseObject>(
 
     override fun sendMessage(message: RequestObject) {
         state = state.copy(requestBody = message.toString())
-        state.printLogRequest()
+        if (protodroid.loggingEnabled) state.printLogRequest()
         super.sendMessage(message)
     }
 
     override fun start(responseListener: Listener<ResponseObject>?, headers: Metadata?) {
-        state = state.copy(requestHeader = headers)
+        state = state.copy(requestHeader = headers.toString())
         val listener = ProtodroidClientCallListener(
             responseListener = responseListener,
             updateStateListener = this
@@ -43,7 +42,7 @@ internal class ProtodroidClientCall<RequestObject, ResponseObject>(
 
     override fun onUpdateHeaderState(header: Metadata?) {
         if (state.responseHeader == null) {
-            state = state.copy(responseHeader = header)
+            state = state.copy(responseHeader = header.toString())
         }
     }
 
@@ -52,28 +51,28 @@ internal class ProtodroidClientCall<RequestObject, ResponseObject>(
     }
 
     override fun onUpdateStatusState(status: Status?, header: Metadata?) {
-        state = state.copy(status = status)
+        val statusLevel = if (status?.code == Status.Code.OK)
+            DataState.StatusLevel.OK
+        else
+            DataState.StatusLevel.ERROR
+
+        state = state.copy(
+            statusCode = status?.code?.value(),
+            statusLevel = statusLevel,
+            statusDescription = status?.description,
+            statusName = status?.code?.name,
+            statusErrorCause = status?.cause?.message
+        )
         if (state.responseHeader == null) {
-            state = state.copy(responseHeader = header)
+            state = state.copy(responseHeader = header.toString())
         }
     }
 
     override fun onFinalState() {
-        GlobalScope.launch(Dispatchers.IO) {
-            val finalState = state
-            finalState.printLogFullResponse()
-
-            val id = repository.saveNewData(finalState)
-            if (id != -1L) {
-                notificationListener.sendNotification(
-                    title = finalState.serviceName.split("/").getOrElse(1) {
-                        finalState.serviceName
-                    },
-                    message = "${finalState.status?.code?.name} (${finalState.status?.code?.value()})",
-                    dataId = id,
-                    serviceName = finalState.serviceName,
-                )
-            }
+        val finalState = state
+        if (protodroid.loggingEnabled) finalState.printLogFullResponse()
+        launch {
+            protodroid.saveNewData(finalState)
         }
     }
 }

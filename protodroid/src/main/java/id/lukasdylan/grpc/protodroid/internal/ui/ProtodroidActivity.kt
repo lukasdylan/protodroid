@@ -3,6 +3,7 @@ package id.lukasdylan.grpc.protodroid.internal.ui
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -18,7 +19,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
-import id.lukasdylan.grpc.protodroid.internal.Protodroid
+import id.lukasdylan.grpc.protodroid.Protodroid
 import id.lukasdylan.grpc.protodroid.internal.repository.InternalProtodroidRepository
 import id.lukasdylan.grpc.protodroid.internal.repository.InternalProtodroidRepositoryImpl
 import id.lukasdylan.grpc.protodroid.internal.viewmodel.DetailViewModel
@@ -90,6 +91,15 @@ internal class ProtodroidActivity : ComponentActivity() {
                     }
                 }
             }
+        }
+    }
+
+    // https://issuetracker.google.com/issues/139738913
+    override fun onBackPressed() {
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q && isTaskRoot) {
+            finishAfterTransition()
+        } else {
+            super.onBackPressed()
         }
     }
 }

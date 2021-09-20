@@ -1,6 +1,7 @@
-package id.lukasdylan.grpc.protodroid.internal
+package id.lukasdylan.grpc.protodroid
 
-internal open class SingletonHolder<out T : Any, in A>(creator: (A) -> T) {
+@Suppress("unused")
+open class SingletonHolder<out T : Any, in A>(creator: (A) -> T) {
     private var creator: ((A) -> T)? = creator
     @Volatile
     private var instance: T? = null

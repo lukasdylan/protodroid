@@ -1,5 +1,6 @@
 package id.lukasdylan.grpc.protodroid.internal
 
+import id.lukasdylan.grpc.protodroid.DataState
 import timber.log.Timber
 
 internal fun DataState.printLogRequest() {
