@@ -46,7 +46,7 @@ afterEvaluate {
                 from components.release
 
                 // You can then customize attributes of the publication as shown below.
-                groupId = this.generateGroupId()
+                groupId = 'io.github.lukasdylan'
                 artifactId = 'protodroid-no-op'
                 version = generateVersionName()
             }
@@ -61,7 +61,7 @@ afterEvaluate {
                 // Applies the component for the debug build variant.
                 from components.debug
 
-                groupId = this.generateGroupId()
+                groupId = 'io.github.lukasdylan'
                 artifactId = 'protodroid'
                 version = generateVersionName()
             }
@@ -83,8 +83,4 @@ private Integer generateVersionCode() {
         code = Integer.parseInt(versionCode)
     }
     return code
-}
-
-private static String generateGroupId() {
-    return 'io.github.lukasdylan'
 }

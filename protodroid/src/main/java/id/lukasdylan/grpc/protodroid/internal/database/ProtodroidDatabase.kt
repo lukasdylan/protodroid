@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [ProtodroidDataEntity::class], version = 1, exportSchema = false)
+@Database(entities = [ProtodroidDataEntity::class], version = 1)
 internal abstract class ProtodroidDatabase : RoomDatabase() {
 
     abstract fun protodroidDao(): ProtodroidDao

@@ -10,15 +10,16 @@ import kotlinx.coroutines.*
 /**
  * Created by Lukas Dylan on 05/08/20.
  */
+@DelicateCoroutinesApi
 internal class ProtodroidClientCall<RequestObject, ResponseObject>(
     method: MethodDescriptor<RequestObject, ResponseObject>,
     callOptions: CallOptions,
     channel: Channel,
     private val repository: ProtodroidRepository,
-    private val protodroidNotificationListener: ProtodroidNotificationListener
+    private val notificationListener: ProtodroidNotificationListener
 ) : ForwardingClientCall.SimpleForwardingClientCall<RequestObject, ResponseObject>(
     channel.newCall(method, callOptions)
-), CoroutineScope by MainScope(), ProtodroidResponseListener {
+), ProtodroidResponseListener {
 
     private var state = DataState(
         serviceUrl = channel.authority().orEmpty(),
@@ -58,24 +59,21 @@ internal class ProtodroidClientCall<RequestObject, ResponseObject>(
     }
 
     override fun onFinalState() {
-        val finalState = state
-        finalState.printLogFullResponse()
-        launch {
-            val id = withContext(Dispatchers.IO) {
-                repository.saveNewData(finalState)
+        GlobalScope.launch(Dispatchers.IO) {
+            val finalState = state
+            finalState.printLogFullResponse()
+
+            val id = repository.saveNewData(finalState)
+            if (id != -1L) {
+                notificationListener.sendNotification(
+                    title = finalState.serviceName.split("/").getOrElse(1) {
+                        finalState.serviceName
+                    },
+                    message = "${finalState.status?.code?.name} (${finalState.status?.code?.value()})",
+                    dataId = id,
+                    serviceName = finalState.serviceName,
+                )
             }
-            protodroidNotificationListener.sendNotification(
-                title = finalState.serviceName.split("/").getOrElse(1) {
-                    finalState.serviceName
-                },
-                message = "${finalState.status?.code?.name} (${finalState.status?.code?.value()})",
-                dataId = id,
-                serviceName = finalState.serviceName,
-                serviceGroup = finalState.serviceName
-                    .split("/")
-                    .getOrNull(0)?.replace("proto.", "")
-                    .orEmpty()
-            )
         }
     }
 }

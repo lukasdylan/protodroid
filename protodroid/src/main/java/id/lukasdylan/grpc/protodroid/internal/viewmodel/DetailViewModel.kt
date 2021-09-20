@@ -28,10 +28,7 @@ internal class DetailViewModel(private val repository: InternalProtodroidReposit
 
     fun fetchDetail(dataId: Long) {
         viewModelScope.launch {
-            repository.fetchSingleData(dataId = dataId)
-                .collect {
-                    detailResponse.emit(it)
-                }
+            repository.fetchSingleData(dataId = dataId).collect(detailResponse::emit)
         }
     }
 

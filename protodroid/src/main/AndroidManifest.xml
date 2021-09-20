@@ -9,7 +9,8 @@
             android:launchMode="singleTask"
             android:taskAffinity=""
             android:excludeFromRecents="true"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/protodroid_AppTheme">
 
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

@@ -21,13 +21,8 @@ internal class InternalProtodroidRepositoryImpl(private val dao: ProtodroidDao) 
         }
     }
 
-    override suspend fun fetchAllData(): Flow<List<ProtodroidDataEntity>> =
-        withContext(Dispatchers.IO) {
-            dao.fetchAllData()
-        }
+    override suspend fun fetchAllData(): Flow<List<ProtodroidDataEntity>> = dao.fetchAllData()
 
     override suspend fun fetchSingleData(dataId: Long): Flow<ProtodroidDataEntity> =
-        withContext(Dispatchers.IO) {
-            dao.fetchSingleDataById(dataId)
-        }
+        dao.fetchSingleDataById(dataId)
 }

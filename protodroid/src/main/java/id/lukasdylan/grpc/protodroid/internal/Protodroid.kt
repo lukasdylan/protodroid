@@ -26,11 +26,5 @@ internal class Protodroid private constructor(context: Context) {
         ProtodroidNotificationListenerImpl(context)
     }
 
-    @Suppress("unused")
-    fun initialize() {
-        // force to create repository
-        repository.initialize()
-    }
-
     companion object : SingletonHolder<Protodroid, Context>(::Protodroid)
 }

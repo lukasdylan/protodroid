@@ -32,7 +32,7 @@ open class ProtodroidInterceptor(context: Context) : ClientInterceptor {
             callOptions = callOptions,
             channel = next,
             repository = repository,
-            protodroidNotificationListener = notificationListener
+            notificationListener = notificationListener
         )
     }
 }
