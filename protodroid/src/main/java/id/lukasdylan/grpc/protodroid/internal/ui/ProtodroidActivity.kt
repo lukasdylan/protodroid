@@ -6,6 +6,7 @@ import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
@@ -13,10 +14,12 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.core.app.NotificationManagerCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
 import id.lukasdylan.grpc.protodroid.Protodroid
@@ -44,6 +47,7 @@ internal class ProtodroidActivity : ComponentActivity() {
             }
             MaterialTheme(colors = colors) {
                 val navHostController = rememberNavController()
+                val navBackStackEntry by navHostController.currentBackStackEntryAsState()
                 NavHost(
                     modifier = Modifier.background(MaterialTheme.colors.background),
                     navController = navHostController,
@@ -65,6 +69,7 @@ internal class ProtodroidActivity : ComponentActivity() {
                                 notificationManager.cancelAll()
                             }
                         )
+                        BackHandler(onBack = ::onMainBack)
                     }
                     composable(
                         route = "${DetailScreen.SCREEN_NAME}?id={id}",
@@ -95,7 +100,7 @@ internal class ProtodroidActivity : ComponentActivity() {
     }
 
     // https://issuetracker.google.com/issues/139738913
-    override fun onBackPressed() {
+    private fun onMainBack() {
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q && isTaskRoot) {
             finishAfterTransition()
         } else {

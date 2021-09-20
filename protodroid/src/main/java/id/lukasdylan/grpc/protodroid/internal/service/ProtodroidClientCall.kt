@@ -18,7 +18,7 @@ internal class ProtodroidClientCall<RequestObject, ResponseObject>(
     private val protodroid: Protodroid
 ) : ForwardingClientCall.SimpleForwardingClientCall<RequestObject, ResponseObject>(
     channel.newCall(method, callOptions)
-), CoroutineScope by MainScope(), ProtodroidResponseListener {
+), ProtodroidResponseListener {
 
     private var state = DataState(
         serviceUrl = channel.authority().orEmpty(),
@@ -71,7 +71,7 @@ internal class ProtodroidClientCall<RequestObject, ResponseObject>(
     override fun onFinalState() {
         val finalState = state
         if (protodroid.loggingEnabled) finalState.printLogFullResponse()
-        launch {
+        GlobalScope.launch {
             protodroid.saveNewData(finalState)
         }
     }
