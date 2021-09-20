@@ -23,7 +23,7 @@ internal class DetailViewModel(private val repository: InternalProtodroidReposit
         return@map it.transformToResponseInformation()
     }
     val title: Flow<String> = detailResponse.map {
-        it.serviceName.split("/").getOrNull(1).orEmpty()
+        it.serviceName.split("/").lastOrNull() ?: it.serviceName
     }
 
     fun fetchDetail(dataId: Long) {

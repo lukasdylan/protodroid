@@ -33,6 +33,9 @@ internal data class ProtodroidDataEntity(
     @ColumnInfo(name = "status_code")
     val statusCode: Int,
 
+    @ColumnInfo(name = "status_level")
+    val statusLevel: Int,
+
     @ColumnInfo(name = "status_name")
     val statusName: String,
 

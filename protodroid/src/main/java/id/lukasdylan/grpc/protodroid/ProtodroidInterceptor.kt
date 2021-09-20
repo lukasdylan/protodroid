@@ -1,26 +1,17 @@
 package id.lukasdylan.grpc.protodroid
 
 import android.content.Context
-import id.lukasdylan.grpc.protodroid.internal.Protodroid
-import id.lukasdylan.grpc.protodroid.internal.repository.ProtodroidRepository
 import id.lukasdylan.grpc.protodroid.internal.service.ProtodroidClientCall
-import id.lukasdylan.grpc.protodroid.internal.service.ProtodroidNotificationListener
 import io.grpc.*
 
 /**
  * Created by Lukas Dylan on 05/08/20.
  */
-open class ProtodroidInterceptor(context: Context) : ClientInterceptor {
+open class ProtodroidInterceptor internal constructor(
+    private val builder: Builder
+) : ClientInterceptor {
 
-    private val repository: ProtodroidRepository
-    private val notificationListener: ProtodroidNotificationListener
-
-    init {
-        with(Protodroid.getInstance(context.applicationContext)) {
-            this@ProtodroidInterceptor.repository = repository
-            this@ProtodroidInterceptor.notificationListener = notificationListener
-        }
-    }
+    constructor(context: Context) : this(Builder(context))
 
     override fun <ReqT, RespT> interceptCall(
         method: MethodDescriptor<ReqT, RespT>,
@@ -31,8 +22,28 @@ open class ProtodroidInterceptor(context: Context) : ClientInterceptor {
             method = method,
             callOptions = callOptions,
             channel = next,
-            repository = repository,
-            notificationListener = notificationListener
+            protodroid = builder.protodroid
         )
+    }
+
+    class Builder constructor(context: Context) {
+        private var notifySuccessful: Boolean = false
+        private var loggingEnabled: Boolean = false
+        internal var protodroid = Protodroid.getInstance(context.applicationContext)
+
+
+        fun notifySuccessful(notify: Boolean) = apply {
+            notifySuccessful = notify
+        }
+
+        fun loggingEnabled(enabled: Boolean) = apply {
+            loggingEnabled = enabled
+        }
+
+        fun build(): ProtodroidInterceptor {
+            protodroid.loggingEnabled = loggingEnabled
+            protodroid.notifySuccessful = notifySuccessful
+            return ProtodroidInterceptor(this)
+        }
     }
 }

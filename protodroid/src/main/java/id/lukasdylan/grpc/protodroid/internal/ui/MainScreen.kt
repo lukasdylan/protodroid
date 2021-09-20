@@ -142,7 +142,7 @@ private fun DataLog(
         ) {
             Text(
                 modifier = Modifier.fillMaxWidth(),
-                text = entity.serviceName.split("/").getOrNull(1).orEmpty(),
+                text = entity.serviceName.split("/").lastOrNull() ?: entity.serviceName,
                 fontFamily = FontFamily.Monospace,
                 style = MaterialTheme.typography.h6,
                 fontWeight = FontWeight.Bold,
@@ -156,9 +156,9 @@ private fun DataLog(
                 text = "${entity.statusName} (${entity.statusCode})",
                 fontFamily = FontFamily.Monospace,
                 style = MaterialTheme.typography.subtitle1,
-                color = when (entity.statusCode) {
-                    0 -> Color(0xff669900)
-                    -1 -> Color.DarkGray
+                color = when (entity.statusLevel) {
+                    0 -> Color.DarkGray
+                    1 -> Color(0xff669900)
                     else -> Color(0xffcc0000)
                 }
             )
@@ -199,6 +199,7 @@ private fun getDummyData(statusCode: Int): ProtodroidDataEntity {
         requestBody = "request body",
         responseBody = "response body",
         statusCode = statusCode,
+        statusLevel = 1,
         statusName = "OK",
         statusDescription = "status description",
         statusErrorCause = "status error cause"
