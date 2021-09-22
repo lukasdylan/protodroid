@@ -9,7 +9,7 @@ import io.grpc.Status
  * Created by Lukas Dylan on 05/08/20.
  */
 @Keep
-data class DataState(
+data class ProtodroidDataState(
     val serviceUrl: String = "",
     val serviceName: String = "",
     val requestHeader: String? = null,
@@ -30,7 +30,7 @@ data class DataState(
     }
 }
 
-internal fun DataState.transformToEntity(): ProtodroidDataEntity {
+internal fun ProtodroidDataState.transformToEntity(): ProtodroidDataEntity {
     return ProtodroidDataEntity(
         serviceUrl = this.serviceUrl,
         serviceName = this.serviceName,
@@ -39,7 +39,7 @@ internal fun DataState.transformToEntity(): ProtodroidDataEntity {
         requestBody = this.requestBody,
         responseBody = this.responseBody,
         statusCode = this.statusCode ?: -1,
-        statusLevel = this.statusLevel?.ordinal ?: DataState.StatusLevel.UNDEFINED.ordinal,
+        statusLevel = this.statusLevel?.ordinal ?: ProtodroidDataState.StatusLevel.UNDEFINED.ordinal,
         statusName = this.statusName.orEmpty(),
         statusDescription = this.statusDescription.orEmpty(),
         statusErrorCause = this.statusErrorCause.orEmpty(),

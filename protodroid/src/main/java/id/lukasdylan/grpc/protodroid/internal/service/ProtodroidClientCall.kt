@@ -1,6 +1,6 @@
 package id.lukasdylan.grpc.protodroid.internal.service
 
-import id.lukasdylan.grpc.protodroid.DataState
+import id.lukasdylan.grpc.protodroid.ProtodroidDataState
 import id.lukasdylan.grpc.protodroid.Protodroid
 import id.lukasdylan.grpc.protodroid.internal.printLogFullResponse
 import id.lukasdylan.grpc.protodroid.internal.printLogRequest
@@ -20,7 +20,7 @@ internal class ProtodroidClientCall<RequestObject, ResponseObject>(
     channel.newCall(method, callOptions)
 ), ProtodroidResponseListener {
 
-    private var state = DataState(
+    private var state = ProtodroidDataState(
         serviceUrl = channel.authority().orEmpty(),
         serviceName = method.fullMethodName.orEmpty()
     )
@@ -52,9 +52,9 @@ internal class ProtodroidClientCall<RequestObject, ResponseObject>(
 
     override fun onUpdateStatusState(status: Status?, header: Metadata?) {
         val statusLevel = if (status?.code == Status.Code.OK)
-            DataState.StatusLevel.OK
+            ProtodroidDataState.StatusLevel.OK
         else
-            DataState.StatusLevel.ERROR
+            ProtodroidDataState.StatusLevel.ERROR
 
         state = state.copy(
             statusCode = status?.code?.value(),
