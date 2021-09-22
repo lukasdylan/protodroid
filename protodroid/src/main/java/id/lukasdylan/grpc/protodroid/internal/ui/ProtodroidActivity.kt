@@ -33,9 +33,13 @@ internal class ProtodroidActivity : ComponentActivity() {
     private val repository: InternalProtodroidRepository by lazy {
         val protodroid = Protodroid.getInstance(this)
         return@lazy InternalProtodroidRepositoryImpl(
-            protodroid.protodroidDao,
-            protodroid.defaultUniqueErrors
+            protodroid.protodroidDao
         )
+    }
+
+    private val defaultUniqueErrors: Boolean by lazy {
+        val protodroid = Protodroid.getInstance(this)
+        return@lazy protodroid.defaultUniqueErrors
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,7 +59,7 @@ internal class ProtodroidActivity : ComponentActivity() {
                 ) {
                     composable(route = MainScreen.SCREEN_NAME) {
                         val mainViewModel by viewModels<MainViewModel>(factoryProducer = {
-                            MainViewModelFactory(repository)
+                            MainViewModelFactory(repository, defaultUniqueErrors)
                         })
                         MainScreen(
                             viewModel = mainViewModel,

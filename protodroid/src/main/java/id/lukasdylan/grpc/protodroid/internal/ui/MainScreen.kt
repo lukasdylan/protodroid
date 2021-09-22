@@ -68,8 +68,8 @@ private fun MainScreen(
     listOfDataLog: List<ProtodroidDataEntity>,
     lazyListState: LazyListState = rememberLazyListState(),
     clearAll: () -> Unit,
-    filter: (filterType: InternalProtodroidRepository.FilterType) -> Unit = {},
-    currentFilters: List<InternalProtodroidRepository.FilterType>,
+    filter: (filterType: MainViewModel.FilterType) -> Unit = {},
+    currentFilters: List<MainViewModel.FilterType>,
     onSelectedDataLog: (ProtodroidDataEntity) -> Unit
 ) {
     val showMenu = remember { mutableStateOf(false) }
@@ -114,11 +114,11 @@ private fun MainScreen(
                         onDismissRequest = { showMenu.value = false }
                     ) {
                         DropdownMenuItem(onClick = {
-                            filter(InternalProtodroidRepository.FilterType.Unique)
+                            filter(MainViewModel.FilterType.Unique)
                             showMenu.value = false
                         }) {
                             Text(
-                                if (currentFilters.contains(InternalProtodroidRepository.FilterType.Unique)) {
+                                if (currentFilters.contains(MainViewModel.FilterType.Unique)) {
                                     "Show duplicates"
                                 } else {
                                     "Show unique"
@@ -126,11 +126,11 @@ private fun MainScreen(
                             )
                         }
                         DropdownMenuItem(onClick = {
-                            filter(InternalProtodroidRepository.FilterType.Errors)
+                            filter(MainViewModel.FilterType.Errors)
                             showMenu.value = false
                         }) {
                             Text(
-                                if (currentFilters.contains(InternalProtodroidRepository.FilterType.Errors)) {
+                                if (currentFilters.contains(MainViewModel.FilterType.Errors)) {
                                     "Show successful"
                                 } else {
                                     "Errors only"
