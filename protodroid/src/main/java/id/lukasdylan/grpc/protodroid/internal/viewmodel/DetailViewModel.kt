@@ -7,7 +7,6 @@ import id.lukasdylan.grpc.protodroid.internal.database.ProtodroidDataEntity
 import id.lukasdylan.grpc.protodroid.internal.repository.InternalProtodroidRepository
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
 import java.util.*
 
 internal class DetailViewModel(private val repository: InternalProtodroidRepository) : ViewModel() {
@@ -40,8 +39,8 @@ internal class DetailViewModel(private val repository: InternalProtodroidReposit
         this.serviceName.takeIf { it.isNotBlank() }?.let {
             data.add("Service Name" to it)
         }
-        data.add("Created Time" to getFormattedDate(this.createdAt))
-        data.add("Last Updated Time" to getFormattedDate(this.lastUpdatedAt))
+        data.add("Created Time" to this.formattedCreateTimestamp)
+        data.add("Last Updated Time" to this.formattedLastUpdateTimestamp)
         val lengthOfRequest = this.lastUpdatedAt - this.createdAt
         data.add("Length Time of Request" to "$lengthOfRequest ms")
         when (this.statusCode) {
@@ -84,11 +83,6 @@ internal class DetailViewModel(private val repository: InternalProtodroidReposit
             data.add("Response Body" to it)
         }
         return data
-    }
-
-    private fun getFormattedDate(timeInMillis: Long): String {
-        val formatter = SimpleDateFormat("d MMM yyyy HH:mm:ss.SSS", Locale.ENGLISH)
-        return formatter.format(Date(timeInMillis))
     }
 }
 

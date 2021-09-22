@@ -10,7 +10,16 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.*
+import androidx.compose.material.Card
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.List
@@ -25,16 +34,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import id.lukasdylan.grpc.protodroid.internal.FilterType
 import id.lukasdylan.grpc.protodroid.internal.database.ProtodroidDataEntity
 import id.lukasdylan.grpc.protodroid.internal.viewmodel.MainViewModel
 import kotlinx.coroutines.Dispatchers
-import java.text.SimpleDateFormat
-import java.util.*
 
 internal object MainScreen {
     const val SCREEN_NAME = "main"
-
-    val simpleDateFormat = SimpleDateFormat("d MMM yyyy HH:mm:ss", Locale.ENGLISH)
 }
 
 @Composable
@@ -66,8 +72,8 @@ private fun MainScreen(
     listOfDataLog: List<ProtodroidDataEntity>,
     lazyListState: LazyListState = rememberLazyListState(),
     clearAll: () -> Unit,
-    filter: (filterType: MainViewModel.FilterType) -> Unit = {},
-    currentFilters: List<MainViewModel.FilterType>,
+    filter: (filterType: FilterType) -> Unit = {},
+    currentFilters: List<FilterType>,
     onSelectedDataLog: (ProtodroidDataEntity) -> Unit
 ) {
     val showMenu = remember { mutableStateOf(false) }
@@ -112,11 +118,11 @@ private fun MainScreen(
                         onDismissRequest = { showMenu.value = false }
                     ) {
                         DropdownMenuItem(onClick = {
-                            filter(MainViewModel.FilterType.Unique)
+                            filter(FilterType.Unique)
                             showMenu.value = false
                         }) {
                             Text(
-                                if (currentFilters.contains(MainViewModel.FilterType.Unique)) {
+                                if (currentFilters.contains(FilterType.Unique)) {
                                     "Show duplicates"
                                 } else {
                                     "Show unique"
@@ -124,11 +130,11 @@ private fun MainScreen(
                             )
                         }
                         DropdownMenuItem(onClick = {
-                            filter(MainViewModel.FilterType.Errors)
+                            filter(FilterType.Errors)
                             showMenu.value = false
                         }) {
                             Text(
-                                if (currentFilters.contains(MainViewModel.FilterType.Errors)) {
+                                if (currentFilters.contains(FilterType.Errors)) {
                                     "Show successful"
                                 } else {
                                     "Errors only"
@@ -208,17 +214,13 @@ private fun DataLog(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 12.dp),
-                text = "Last Updated: ${getFormattedDate(entity.lastUpdatedAt)}",
+                text = "Last Updated: ${entity.formattedLastUpdateTimestamp}",
                 fontFamily = FontFamily.Monospace,
                 style = MaterialTheme.typography.caption,
                 color = MaterialTheme.colors.onSurface
             )
         }
     }
-}
-
-private fun getFormattedDate(timeInMillis: Long): String {
-    return MainScreen.simpleDateFormat.format(Date(timeInMillis))
 }
 
 @Composable
@@ -229,7 +231,8 @@ private fun Preview_MainScreen() {
         listOfDataLog = listOf(getDummyData(0), getDummyData(1)),
         onSelectedDataLog = {},
         clearAll = {},
-        currentFilters = emptyList()
+        currentFilters = emptyList(),
+        filter = {}
     )
 }
 

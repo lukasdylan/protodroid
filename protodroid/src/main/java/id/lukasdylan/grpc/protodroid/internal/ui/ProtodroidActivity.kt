@@ -3,10 +3,8 @@ package id.lukasdylan.grpc.protodroid.internal.ui
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
@@ -73,7 +71,6 @@ internal class ProtodroidActivity : ComponentActivity() {
                                 notificationManager.cancelAll()
                             }
                         )
-                        BackHandler(onBack = ::onMainBack)
                     }
                     composable(
                         route = "${DetailScreen.SCREEN_NAME}?id={id}",
@@ -100,15 +97,6 @@ internal class ProtodroidActivity : ComponentActivity() {
                     }
                 }
             }
-        }
-    }
-
-    // https://issuetracker.google.com/issues/139738913
-    private fun onMainBack() {
-        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q && isTaskRoot) {
-            finishAfterTransition()
-        } else {
-            super.onBackPressed()
         }
     }
 }

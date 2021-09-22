@@ -3,7 +3,10 @@ package id.lukasdylan.grpc.protodroid.internal.database
 import androidx.annotation.Keep
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
+import java.text.SimpleDateFormat
+import java.util.*
 
 @Keep
 @Entity
@@ -50,4 +53,13 @@ internal data class ProtodroidDataEntity(
 
     @ColumnInfo(name = "update_timestamp")
     val lastUpdatedAt: Long = System.currentTimeMillis()
-)
+) {
+
+    @Ignore
+    val formattedCreateTimestamp: String =
+        SimpleDateFormat("d MMM yyyy HH:mm:ss.SSS", Locale.ENGLISH).format(Date(createdAt))
+
+    @Ignore
+    val formattedLastUpdateTimestamp: String =
+        SimpleDateFormat("d MMM yyyy HH:mm:ss.SSS", Locale.ENGLISH).format(Date(lastUpdatedAt))
+}

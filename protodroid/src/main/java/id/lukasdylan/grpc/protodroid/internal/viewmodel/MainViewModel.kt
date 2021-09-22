@@ -3,47 +3,34 @@ package id.lukasdylan.grpc.protodroid.internal.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import id.lukasdylan.grpc.protodroid.internal.FilterType
 import id.lukasdylan.grpc.protodroid.internal.database.ProtodroidDataEntity
 import id.lukasdylan.grpc.protodroid.internal.repository.InternalProtodroidRepository
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 internal class MainViewModel(
     private val repository: InternalProtodroidRepository,
     defaultUniqueErrors: Boolean
 ) : ViewModel() {
 
-    enum class FilterType {
-        Errors,
-        Unique
-    }
-
     private val _dataResponse = MutableStateFlow<List<ProtodroidDataEntity>>(emptyList())
     val dataResponse: Flow<List<ProtodroidDataEntity>> = _dataResponse
 
     private val _filterListFlow: MutableStateFlow<List<FilterType>> = if (defaultUniqueErrors)
-        MutableStateFlow(
-            mutableListOf(
-                FilterType.Unique,
-                FilterType.Errors
-            )
-        )
+        MutableStateFlow(FilterType.values().toList())
     else
-        MutableStateFlow(mutableListOf())
-    val filterListFlow = _filterListFlow
+        MutableStateFlow(emptyList())
+    val filterListFlow: Flow<List<FilterType>> = _filterListFlow
 
     init {
         viewModelScope.launch {
             repository.fetchAllData().combine(filterListFlow) { dataLogList, filterList ->
-                dataLogList
-                    .getErrors(filterList)
-                    .getDistinct(filterList)
+                dataLogList filterWith filterList
             }.collect { finalList ->
                 _dataResponse.emit(finalList)
             }
-//            getFilteredData().collect {
-//                _dataResponse.emit(it)
-//            }
         }
     }
 
@@ -53,42 +40,34 @@ internal class MainViewModel(
         }
     }
 
-//    /**
-//     * Filter data with no duplicates or successful responses by default
-//     */
-//    private suspend fun getFilteredData(): Flow<List<ProtodroidDataEntity>> {
-//        return repository.fetchAllData()
-//            .map { getErrors(it) }
-//            .map { getDistinct(it) }
-//    }
-
-    private fun List<ProtodroidDataEntity>.getErrors(list: List<FilterType>): List<ProtodroidDataEntity> {
-        return if (list.contains(FilterType.Errors)) {
-            this.filter { data -> data.statusCode != 0 }
-        } else {
-            this
-        }
-    }
-
-    private fun List<ProtodroidDataEntity>.getDistinct(list: List<FilterType>): List<ProtodroidDataEntity> {
-        return if (list.contains(FilterType.Unique)) {
-            this.distinctBy { data -> data.serviceName + data.serviceUrl + data.statusCode }
-        } else {
-            this
+    private infix fun List<ProtodroidDataEntity>.filterWith(filters: List<FilterType>): List<ProtodroidDataEntity> {
+        return when {
+            filters.contains(FilterType.Errors) -> {
+                Timber.tag("Error FilterType").d("Have error filter")
+                this.filter { data -> data.statusCode != 0 }
+            }
+            filters.contains(FilterType.Unique) -> {
+                Timber.tag("Unique FilterType").d("Have unique filter")
+                this.distinctBy { data -> data.serviceName + data.serviceUrl + data.statusCode }
+            }
+            else -> {
+                Timber.tag("No FilterType").d("No Filter")
+                this
+            }
+        }.also {
+            Timber.tag("Final List").d(it.joinToString(", "))
         }
     }
 
     fun updateFilter(filterType: FilterType) {
         viewModelScope.launch {
-            val currentFilterList = filterListFlow.first() as MutableList
+            val currentFilterList = filterListFlow.first().toMutableList()
             if (currentFilterList.contains(filterType)) {
                 currentFilterList.remove(filterType)
             } else {
                 currentFilterList.add(filterType)
             }
             _filterListFlow.emit(currentFilterList)
-
-//            _dataResponse.emit(getFilteredData().first())
         }
     }
 }

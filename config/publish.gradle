@@ -20,11 +20,11 @@ afterEvaluate {
         repositories {
             maven {
                 credentials {
-                    username "$nexusUsername"
-                    password "$nexusPassword"
+                    username "$protodroidNexusUsername"
+                    password "$protodroidNexusPassword"
                 }
-                def releasesRepoUrl = "${nexusUrl}/content/repositories/releases/"
-                def snapshotsRepoUrl = "${nexusUrl}/content/repositories/snapshots/"
+                def releasesRepoUrl = "${protodroidNexusUrl}/content/repositories/releases/"
+                def snapshotsRepoUrl = "${protodroidNexusUrl}/content/repositories/snapshots/"
                 url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
                 name = 'protodroid'
             }
