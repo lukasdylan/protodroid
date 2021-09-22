@@ -1,9 +1,9 @@
 package id.lukasdylan.grpc.protodroid.internal
 
-import id.lukasdylan.grpc.protodroid.DataState
+import id.lukasdylan.grpc.protodroid.ProtodroidDataState
 import timber.log.Timber
 
-internal fun DataState.printLogRequest() {
+internal fun ProtodroidDataState.printLogRequest() {
     val stringBuilder = StringBuilder(".")
         .appendLine()
         .appendLine("----- Service URL: -----")
@@ -17,7 +17,7 @@ internal fun DataState.printLogRequest() {
     Timber.tag("GRPC").d(stringBuilder.toString())
 }
 
-internal fun DataState.printLogFullResponse() {
+internal fun ProtodroidDataState.printLogFullResponse() {
     val stringBuilder = StringBuilder(".")
         .appendLine()
         .appendLine("----- Service URL: -----")

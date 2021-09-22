@@ -32,11 +32,11 @@ class Protodroid private constructor(context: Context) {
         ProtodroidNotificationListenerImpl(context)
     }
 
-    suspend fun saveNewData(dataState: DataState) {
+    suspend fun saveNewData(dataState: ProtodroidDataState) {
         val id = withContext(Dispatchers.IO) {
             repository.saveNewData(dataState)
         }
-        if (id != -1L && (notifySuccessful || dataState.statusLevel != DataState.StatusLevel.OK)) {
+        if (id != -1L && (notifySuccessful || dataState.statusLevel != ProtodroidDataState.StatusLevel.OK)) {
             notificationListener.sendNotification(
                 title = dataState.serviceName.split("/").lastOrNull() ?: dataState.serviceName,
                 message = "${dataState.statusName} (${dataState.statusCode})",
