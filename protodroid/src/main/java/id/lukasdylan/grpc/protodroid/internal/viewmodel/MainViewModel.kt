@@ -21,19 +21,29 @@ internal class MainViewModel(
     private val _dataResponse = MutableStateFlow<List<ProtodroidDataEntity>>(emptyList())
     val dataResponse: Flow<List<ProtodroidDataEntity>> = _dataResponse
 
-    val filterList = if (defaultUniqueErrors)
-        mutableListOf(
-            FilterType.Unique,
-            FilterType.Errors
+    private val _filterListFlow: MutableStateFlow<List<FilterType>> = if (defaultUniqueErrors)
+        MutableStateFlow(
+            mutableListOf(
+                FilterType.Unique,
+                FilterType.Errors
+            )
         )
     else
-        mutableListOf()
+        MutableStateFlow(mutableListOf())
+    val filterListFlow = _filterListFlow
 
     init {
         viewModelScope.launch {
-            getFilteredData().collect {
-                _dataResponse.emit(it)
+            repository.fetchAllData().combine(filterListFlow) { dataLogList, filterList ->
+                dataLogList
+                    .getErrors(filterList)
+                    .getDistinct(filterList)
+            }.collect { finalList ->
+                _dataResponse.emit(finalList)
             }
+//            getFilteredData().collect {
+//                _dataResponse.emit(it)
+//            }
         }
     }
 
@@ -43,40 +53,42 @@ internal class MainViewModel(
         }
     }
 
-    /**
-     * Filter data with no duplicates or successful responses by default
-     */
-    private suspend fun getFilteredData(): Flow<List<ProtodroidDataEntity>> {
-        return repository.fetchAllData()
-            .map { getErrors(it) }
-            .map { getDistinct(it) }
-    }
+//    /**
+//     * Filter data with no duplicates or successful responses by default
+//     */
+//    private suspend fun getFilteredData(): Flow<List<ProtodroidDataEntity>> {
+//        return repository.fetchAllData()
+//            .map { getErrors(it) }
+//            .map { getDistinct(it) }
+//    }
 
-    private fun getErrors(list: List<ProtodroidDataEntity>): List<ProtodroidDataEntity> {
-        return if (filterList.contains(FilterType.Errors)) {
-            list.filter { data -> data.statusCode != 0 }
+    private fun List<ProtodroidDataEntity>.getErrors(list: List<FilterType>): List<ProtodroidDataEntity> {
+        return if (list.contains(FilterType.Errors)) {
+            this.filter { data -> data.statusCode != 0 }
         } else {
-            list
+            this
         }
     }
 
-    private fun getDistinct(list: List<ProtodroidDataEntity>): List<ProtodroidDataEntity> {
-        return if (filterList.contains(FilterType.Unique)) {
-            list.distinctBy { data -> data.serviceName + data.serviceUrl + data.statusCode }
+    private fun List<ProtodroidDataEntity>.getDistinct(list: List<FilterType>): List<ProtodroidDataEntity> {
+        return if (list.contains(FilterType.Unique)) {
+            this.distinctBy { data -> data.serviceName + data.serviceUrl + data.statusCode }
         } else {
-            list
+            this
         }
     }
 
     fun updateFilter(filterType: FilterType) {
-        if (filterList.contains(filterType)) {
-            filterList.remove(filterType)
-        } else {
-            filterList.add(filterType)
-        }
-
         viewModelScope.launch {
-            _dataResponse.emit(getFilteredData().first())
+            val currentFilterList = filterListFlow.first() as MutableList
+            if (currentFilterList.contains(filterType)) {
+                currentFilterList.remove(filterType)
+            } else {
+                currentFilterList.add(filterType)
+            }
+            _filterListFlow.emit(currentFilterList)
+
+//            _dataResponse.emit(getFilteredData().first())
         }
     }
 }
