@@ -8,6 +8,7 @@ import id.lukasdylan.grpc.protodroid.internal.repository.InternalProtodroidRepos
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 internal class MainViewModel(private val repository: InternalProtodroidRepository) : ViewModel() {
@@ -15,9 +16,11 @@ internal class MainViewModel(private val repository: InternalProtodroidRepositor
     private val _dataResponse = MutableStateFlow<List<ProtodroidDataEntity>>(emptyList())
     val dataResponse: Flow<List<ProtodroidDataEntity>> = _dataResponse
 
+    val filterList = repository.filterList
+
     init {
         viewModelScope.launch {
-            repository.fetchAllData().collect {
+            repository.getFilteredData().collect {
                 _dataResponse.emit(it)
             }
         }
@@ -26,6 +29,13 @@ internal class MainViewModel(private val repository: InternalProtodroidRepositor
     fun deleteAllData() {
         viewModelScope.launch {
             repository.deleteAllData()
+        }
+    }
+
+    fun updateFilter(filterType: InternalProtodroidRepository.FilterType) {
+        viewModelScope.launch {
+            repository.updateFilter(filterType)
+            _dataResponse.emit(repository.getFilteredData().first())
         }
     }
 }

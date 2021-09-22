@@ -27,8 +27,9 @@ open class ProtodroidInterceptor internal constructor(
     }
 
     class Builder constructor(context: Context) {
-        private var notifySuccessful: Boolean = false
+        private var notifySuccessful: Boolean = true
         private var loggingEnabled: Boolean = false
+        private var defaultUniqueErrors: Boolean = false
         internal var protodroid = Protodroid.getInstance(context.applicationContext)
 
 
@@ -40,9 +41,14 @@ open class ProtodroidInterceptor internal constructor(
             loggingEnabled = enabled
         }
 
+        fun defaultUniqueErrors(enabled: Boolean) = apply {
+            defaultUniqueErrors = enabled
+        }
+
         fun build(): ProtodroidInterceptor {
             protodroid.loggingEnabled = loggingEnabled
             protodroid.notifySuccessful = notifySuccessful
+            protodroid.defaultUniqueErrors = defaultUniqueErrors
             return ProtodroidInterceptor(this)
         }
     }

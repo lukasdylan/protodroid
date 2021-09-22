@@ -10,26 +10,26 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.Card
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.List
+import androidx.compose.material.icons.rounded.DateRange
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import id.lukasdylan.grpc.protodroid.internal.database.ProtodroidDataEntity
+import id.lukasdylan.grpc.protodroid.internal.repository.InternalProtodroidRepository
+import id.lukasdylan.grpc.protodroid.internal.repository.ProtodroidRepository
 import id.lukasdylan.grpc.protodroid.internal.viewmodel.MainViewModel
 import kotlinx.coroutines.Dispatchers
 import java.text.SimpleDateFormat
@@ -46,17 +46,20 @@ internal fun MainScreen(
     viewModel: MainViewModel,
     title: String,
     onSelectedDataLog: (ProtodroidDataEntity) -> Unit,
-    onClearAllDataListener: () -> Unit
+    clearNotifications: () -> Unit
 ) {
     val data = viewModel.dataResponse.collectAsState(emptyList(), Dispatchers.Main.immediate)
     MainScreen(
         title = title,
         listOfDataLog = data.value,
         onSelectedDataLog = onSelectedDataLog,
-        onClearAllDataListener = {
+        clearAll = {
             viewModel.deleteAllData()
-            onClearAllDataListener.invoke()
-        })
+            clearNotifications()
+        },
+        filter = { filterType -> viewModel.updateFilter(filterType) },
+        currentFilters = viewModel.filterList
+    )
 }
 
 @Composable
@@ -64,9 +67,12 @@ private fun MainScreen(
     title: String,
     listOfDataLog: List<ProtodroidDataEntity>,
     lazyListState: LazyListState = rememberLazyListState(),
-    onClearAllDataListener: () -> Unit,
+    clearAll: () -> Unit,
+    filter: (filterType: InternalProtodroidRepository.FilterType) -> Unit = {},
+    currentFilters: List<InternalProtodroidRepository.FilterType>,
     onSelectedDataLog: (ProtodroidDataEntity) -> Unit
 ) {
+    val showMenu = remember { mutableStateOf(false) }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -96,7 +102,43 @@ private fun MainScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = onClearAllDataListener) {
+                    IconButton(onClick = { showMenu.value = !showMenu.value }) {
+                        Icon(
+                            Icons.Outlined.List,
+                            contentDescription = "",
+                            tint = MaterialTheme.colors.onSurface
+                        )
+                    }
+                    DropdownMenu(
+                        expanded = showMenu.value,
+                        onDismissRequest = { showMenu.value = false }
+                    ) {
+                        DropdownMenuItem(onClick = {
+                            filter(InternalProtodroidRepository.FilterType.Unique)
+                            showMenu.value = false
+                        }) {
+                            Text(
+                                if (currentFilters.contains(InternalProtodroidRepository.FilterType.Unique)) {
+                                    "Show duplicates"
+                                } else {
+                                    "Show unique"
+                                }
+                            )
+                        }
+                        DropdownMenuItem(onClick = {
+                            filter(InternalProtodroidRepository.FilterType.Errors)
+                            showMenu.value = false
+                        }) {
+                            Text(
+                                if (currentFilters.contains(InternalProtodroidRepository.FilterType.Errors)) {
+                                    "Show successful"
+                                } else {
+                                    "Errors only"
+                                }
+                            )
+                        }
+                    }
+                    IconButton(onClick = clearAll) {
                         Icon(
                             Icons.Outlined.Delete,
                             contentDescription = "",
@@ -186,7 +228,9 @@ private fun Preview_MainScreen() {
         title = "Virgo Dev",
         listOfDataLog = listOf(getDummyData(0), getDummyData(1)),
         onSelectedDataLog = {},
-        onClearAllDataListener = {})
+        clearAll = {},
+        currentFilters = emptyList()
+    )
 }
 
 private fun getDummyData(statusCode: Int): ProtodroidDataEntity {
