@@ -14,12 +14,10 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.core.app.NotificationManagerCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
 import id.lukasdylan.grpc.protodroid.Protodroid
@@ -33,8 +31,11 @@ import id.lukasdylan.grpc.protodroid.internal.viewmodel.MainViewModelFactory
 internal class ProtodroidActivity : ComponentActivity() {
 
     private val repository: InternalProtodroidRepository by lazy {
-        val dao = Protodroid.getInstance(this).protodroidDao
-        return@lazy InternalProtodroidRepositoryImpl(dao)
+        val protodroid = Protodroid.getInstance(this)
+        return@lazy InternalProtodroidRepositoryImpl(
+            protodroid.protodroidDao,
+            protodroid.defaultUniqueErrors
+        )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,7 +48,6 @@ internal class ProtodroidActivity : ComponentActivity() {
             }
             MaterialTheme(colors = colors) {
                 val navHostController = rememberNavController()
-                val navBackStackEntry by navHostController.currentBackStackEntryAsState()
                 NavHost(
                     modifier = Modifier.background(MaterialTheme.colors.background),
                     navController = navHostController,
@@ -63,7 +63,7 @@ internal class ProtodroidActivity : ComponentActivity() {
                             onSelectedDataLog = {
                                 navHostController.navigate(route = "${DetailScreen.SCREEN_NAME}?id=${it.id}")
                             },
-                            onClearAllDataListener = {
+                            clearNotifications = {
                                 val notificationManager =
                                     NotificationManagerCompat.from(applicationContext)
                                 notificationManager.cancelAll()
