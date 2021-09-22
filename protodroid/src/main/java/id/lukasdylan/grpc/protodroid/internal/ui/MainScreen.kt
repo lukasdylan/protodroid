@@ -14,22 +14,18 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.List
-import androidx.compose.material.icons.rounded.DateRange
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import id.lukasdylan.grpc.protodroid.internal.database.ProtodroidDataEntity
-import id.lukasdylan.grpc.protodroid.internal.repository.InternalProtodroidRepository
-import id.lukasdylan.grpc.protodroid.internal.repository.ProtodroidRepository
 import id.lukasdylan.grpc.protodroid.internal.viewmodel.MainViewModel
 import kotlinx.coroutines.Dispatchers
 import java.text.SimpleDateFormat
@@ -49,6 +45,8 @@ internal fun MainScreen(
     clearNotifications: () -> Unit
 ) {
     val data = viewModel.dataResponse.collectAsState(emptyList(), Dispatchers.Main.immediate)
+    val filterList =
+        viewModel.filterListFlow.collectAsState(emptyList(), Dispatchers.Main.immediate)
     MainScreen(
         title = title,
         listOfDataLog = data.value,
@@ -58,7 +56,7 @@ internal fun MainScreen(
             clearNotifications()
         },
         filter = { filterType -> viewModel.updateFilter(filterType) },
-        currentFilters = viewModel.filterList
+        currentFilters = filterList.value
     )
 }
 
@@ -155,7 +153,9 @@ private fun MainScreen(
         ) {
             items(listOfDataLog) {
                 DataLog(
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 6.dp),
                     entity = it,
                     onSelectedDataLog = onSelectedDataLog
                 )
