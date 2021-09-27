@@ -29,6 +29,8 @@ open class ProtodroidInterceptor internal constructor(
 
         fun loggingEnabled(enabled: Boolean) = apply {}
 
+        fun defaultUniqueErrors(enabled: Boolean) = apply {}
+
         fun build(): ProtodroidInterceptor {
             return ProtodroidInterceptor(this)
         }
