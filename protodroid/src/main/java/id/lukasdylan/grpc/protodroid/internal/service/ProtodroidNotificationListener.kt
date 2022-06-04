@@ -46,11 +46,16 @@ internal class ProtodroidNotificationListenerImpl(private val context: Context) 
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
 
+        val flag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            PendingIntent.FLAG_IMMUTABLE
+        } else {
+            0
+        }
         val pendingIntent = PendingIntent.getActivity(
             context,
             dataId.toInt(),
             intent,
-            PendingIntent.FLAG_UPDATE_CURRENT
+            PendingIntent.FLAG_UPDATE_CURRENT or flag
         )
 
         val builder = NotificationCompat.Builder(context, channelId)
