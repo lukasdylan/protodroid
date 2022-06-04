@@ -8,7 +8,7 @@ android {
     compileSdkVersion 32
     buildToolsVersion "32.1.0-rc1"
     defaultConfig {
-        minSdkVersion 23
+        minSdkVersion 21
         targetSdkVersion 32
         versionCode 1
         versionName "1.0.0"
@@ -44,7 +44,7 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "1.8"
     }
 
     buildFeatures {
