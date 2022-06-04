@@ -2,8 +2,8 @@ apply from: "$rootDir/config/library.gradle"
 apply from: "$rootDir/config/publish.gradle"
 
 dependencies {
-    implementation 'io.grpc:grpc-protobuf-lite:1.36.0'
-    implementation 'androidx.activity:activity-compose:1.3.1'
-    implementation 'androidx.compose.compiler:compiler:1.0.1'
+    implementation 'io.grpc:grpc-protobuf-lite:1.47.0'
+    implementation 'androidx.activity:activity-compose:1.4.0'
+    implementation 'androidx.compose.compiler:compiler:1.1.1'
     testImplementation 'junit:junit:4.13.2'
 }
