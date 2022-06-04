@@ -50,7 +50,7 @@ internal class ProtodroidNotificationListenerImpl(private val context: Context) 
             context,
             dataId.toInt(),
             intent,
-            PendingIntent.FLAG_UPDATE_CURRENT
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
 
         val builder = NotificationCompat.Builder(context, channelId)
