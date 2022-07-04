@@ -7,6 +7,7 @@ class Protodroid private constructor(context: Context) {
 
     var loggingEnabled: Boolean = false
     var notifySuccessful: Boolean = true
+    var defaultUniqueErrors: Boolean = false
 
     suspend fun saveNewData(dataState: ProtodroidDataState) {}
 

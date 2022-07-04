@@ -35,16 +35,15 @@ internal class MainViewModel(
     init {
         viewModelScope.launch {
             repository.fetchAllData().combine(filterListFlow) { dataLogList, filterList ->
-                dataLogList
-                    .getErrors(filterList)
-                    .getDistinct(filterList)
+                dataLogList.applyFilters(filterList)
             }.collect { finalList ->
                 _dataResponse.emit(finalList)
             }
-//            getFilteredData().collect {
-//                _dataResponse.emit(it)
-//            }
         }
+    }
+
+    private fun List<ProtodroidDataEntity>.applyFilters(filterList: List<FilterType>): List<ProtodroidDataEntity> {
+        return this.getErrors(filterList).getDistinct(filterList)
     }
 
     fun deleteAllData() {
@@ -52,15 +51,6 @@ internal class MainViewModel(
             repository.deleteAllData()
         }
     }
-
-//    /**
-//     * Filter data with no duplicates or successful responses by default
-//     */
-//    private suspend fun getFilteredData(): Flow<List<ProtodroidDataEntity>> {
-//        return repository.fetchAllData()
-//            .map { getErrors(it) }
-//            .map { getDistinct(it) }
-//    }
 
     private fun List<ProtodroidDataEntity>.getErrors(list: List<FilterType>): List<ProtodroidDataEntity> {
         return if (list.contains(FilterType.Errors)) {
@@ -88,7 +78,13 @@ internal class MainViewModel(
             }
             _filterListFlow.emit(currentFilterList)
 
-//            _dataResponse.emit(getFilteredData().first())
+            // Fetch all data again, otherwise we won't be able to re-add filtered out items
+            _dataResponse.emit(
+                repository
+                    .fetchAllData()
+                    .first()
+                    .applyFilters(currentFilterList)
+            )
         }
     }
 }
